@@ -11,10 +11,15 @@ import { notFoundHandler } from "./shared/middlewares/not-found-handler";
 import { setupSwagger } from "./shared/configs/swagger";
 import env from "./shared/configs/env";
 
+import { toNodeHandler } from "better-auth/node";
+
 import sourceMapSupport from "source-map-support";
+import { auth } from "./lib/auth";
 sourceMapSupport.install();
 
 const app: Express = express();
+
+app.all("/api/auth/*splat", toNodeHandler(auth));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -38,7 +43,7 @@ app.get("/", (req: Request, res: Response) => {
   res.redirect("/api/v1/health");
 });
 
-app.use("/api/v1", Routes);
+app.use("/api", Routes);
 
 // Not found handler (should be after routes)
 app.use(notFoundHandler);

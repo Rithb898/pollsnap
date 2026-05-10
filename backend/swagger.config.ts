@@ -7,7 +7,7 @@ const doc = {
     version: "1.0.0"
   },
   host: `localhost:8888`,
-  basePath: "/api/v1",
+  basePath: "/api",
   schemes: ["http"]
 };
 
