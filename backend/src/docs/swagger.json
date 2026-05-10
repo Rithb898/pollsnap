@@ -30,6 +30,16 @@
           }
         }
       }
+    },
+    "/users/me": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   }
 }

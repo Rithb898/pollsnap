@@ -1,0 +1,1 @@
+Use Subagents. Use pnpm instead of npm. First Make Swagger Docs then implement backend routes and logic.
