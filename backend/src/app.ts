@@ -19,10 +19,6 @@ sourceMapSupport.install();
 
 const app: Express = express();
 
-app.all("/api/auth/*splat", toNodeHandler(auth));
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: env.CORS_ORIGIN || "*",
@@ -31,6 +27,11 @@ app.use(
     credentials: true
   })
 );
+
+app.all("/api/auth/*splat", toNodeHandler(auth));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 app.use(cookieParser());
 app.use(morgan(env.NODE_ENV === "development" ? "dev" : "combined"));
