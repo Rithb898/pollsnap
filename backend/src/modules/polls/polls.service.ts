@@ -7,6 +7,7 @@ import type {
   UpdatePollInput,
   ListPollsQuery
 } from "./polls.schema";
+import { emitPollClosed, emitPollPublished } from "@/lib/socket-emitter";
 
 export interface CreatePollData {
   title: string;
@@ -220,6 +221,8 @@ export const publishPoll = async (id: string, userId: string) => {
     .where(eq(poll.id, id))
     .returning();
 
+  emitPollPublished(id);
+
   return publishedPoll;
 };
 
@@ -303,6 +306,9 @@ export const closePoll = async (id: string, userId: string) => {
     .set({ status: "published" })
     .where(eq(poll.id, id))
     .returning();
+
+  emitPollClosed(id);
+  emitPollPublished(id);
 
   return publishedPoll;
 };

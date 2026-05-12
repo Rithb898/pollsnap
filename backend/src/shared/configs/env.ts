@@ -22,7 +22,10 @@ export const envSchema = z.object({
 
   // OAuth Providers
   GOOGLE_CLIENT_ID: z.string().min(1, "GOOGLE_CLIENT_ID is required"),
-  GOOGLE_CLIENT_SECRET: z.string().min(1, "GOOGLE_CLIENT_SECRET is required")
+  GOOGLE_CLIENT_SECRET: z.string().min(1, "GOOGLE_CLIENT_SECRET is required"),
+
+  // Redis for Socket.io
+  REDIS_URL: z.string().url().optional()
 });
 
 export type Env = z.infer<typeof envSchema>;

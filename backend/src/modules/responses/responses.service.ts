@@ -1,8 +1,9 @@
 import db from "@/db/db";
 import { poll, question, option, response, responseAnswer } from "@/drizzle";
-import { eq, and, isNull, sql } from "drizzle-orm";
+import { eq, and, isNull, sql, count } from "drizzle-orm";
 import { ApiError } from "@/shared/errors/api-error";
 import type { SubmitResponseInput } from "./responses.schema";
+import { emitResponseNew, emitVoteUpdate } from "@/lib/socket-emitter";
 
 export const submitResponse = async (
   pollId: string,
@@ -142,6 +143,30 @@ export const submitResponse = async (
     .from(response)
     .where(eq(response.id, newResponse.id))
     .limit(1);
+
+  const totalResponsesResult = await db
+    .select({ count: count() })
+    .from(response)
+    .where(eq(response.pollId, pollId));
+  const totalResponses = totalResponsesResult[0]?.count || 0;
+
+  emitResponseNew(pollId, totalResponses, createdResponse.id);
+
+  for (const answer of data.answers) {
+    const voteCountResult = await db
+      .select({ count: count() })
+      .from(responseAnswer)
+      .where(eq(responseAnswer.optionId, answer.optionId));
+    const voteCount = voteCountResult[0]?.count || 0;
+
+    emitVoteUpdate(
+      pollId,
+      answer.questionId,
+      answer.optionId,
+      voteCount,
+      totalResponses
+    );
+  }
 
   return createdResponse;
 };
