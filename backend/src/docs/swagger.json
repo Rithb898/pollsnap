@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Drizzle PG Starter",
-    "description": "Drizzle PG Starter",
+    "title": "PollSnap API",
+    "description": "PollSnap - A polling platform API",
     "version": "1.0.0"
   },
   "host": "localhost:8888",
@@ -10,10 +10,18 @@
   "schemes": [
     "http"
   ],
+  "tags": [
+    { "name": "Health", "description": "Health check endpoints" },
+    { "name": "Users", "description": "User management endpoints" },
+    { "name": "Polls", "description": "Poll management endpoints" },
+    { "name": "Questions", "description": "Question management endpoints" },
+    { "name": "Options", "description": "Option management endpoints" }
+  ],
   "paths": {
     "/health/": {
       "get": {
-        "description": "",
+        "tags": ["Health"],
+        "description": "Basic health check",
         "responses": {
           "default": {
             "description": ""
@@ -23,7 +31,8 @@
     },
     "/health/detailed": {
       "get": {
-        "description": "",
+        "tags": ["Health"],
+        "description": "Detailed health check",
         "responses": {
           "default": {
             "description": ""
@@ -33,7 +42,8 @@
     },
     "/v1/users/me": {
       "get": {
-        "description": "",
+        "tags": ["Users"],
+        "description": "Get current user",
         "responses": {
           "default": {
             "description": ""
@@ -43,7 +53,8 @@
     },
     "/v1/polls/": {
       "get": {
-        "description": "",
+        "tags": ["Polls"],
+        "description": "List user's polls",
         "responses": {
           "default": {
             "description": ""
@@ -51,7 +62,8 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": ["Polls"],
+        "description": "Create a new poll",
         "responses": {
           "default": {
             "description": ""
@@ -61,7 +73,8 @@
     },
     "/v1/polls/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Polls"],
+        "description": "Get poll by ID",
         "parameters": [
           {
             "name": "id",
@@ -77,7 +90,8 @@
         }
       },
       "patch": {
-        "description": "",
+        "tags": ["Polls"],
+        "description": "Update poll",
         "parameters": [
           {
             "name": "id",
@@ -93,7 +107,8 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Polls"],
+        "description": "Delete poll",
         "parameters": [
           {
             "name": "id",
@@ -111,7 +126,8 @@
     },
     "/v1/polls/{id}/publish": {
       "patch": {
-        "description": "",
+        "tags": ["Polls"],
+        "description": "Publish poll",
         "parameters": [
           {
             "name": "id",
@@ -129,7 +145,8 @@
     },
     "/v1/polls/{id}/activate": {
       "post": {
-        "description": "",
+        "tags": ["Polls"],
+        "description": "Activate poll",
         "parameters": [
           {
             "name": "id",
@@ -147,10 +164,247 @@
     },
     "/v1/polls/{id}/close": {
       "post": {
-        "description": "",
+        "tags": ["Polls"],
+        "description": "Close poll",
         "parameters": [
           {
             "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/polls/{id}/questions/": {
+      "get": {
+        "tags": ["Questions"],
+        "description": "List questions for a poll",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": ["Questions"],
+        "description": "Create a question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/polls/{id}/questions/reorder": {
+      "post": {
+        "tags": ["Questions"],
+        "description": "Reorder questions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/polls/{id}/questions/{questionId}": {
+      "patch": {
+        "tags": ["Questions"],
+        "description": "Update question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Questions"],
+        "description": "Delete question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/polls/{id}/questions/{questionId}/options": {
+      "get": {
+        "tags": ["Options"],
+        "description": "List options for a question",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": ["Options"],
+        "description": "Create an option",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/polls/{id}/questions/{questionId}/options/reorder": {
+      "post": {
+        "tags": ["Options"],
+        "description": "Reorder options",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/polls/{id}/questions/{questionId}/options/{optionId}": {
+      "patch": {
+        "tags": ["Options"],
+        "description": "Update option",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "optionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Options"],
+        "description": "Delete option",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "questionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "optionId",
             "in": "path",
             "required": true,
             "type": "string"

@@ -11,6 +11,7 @@ import {
   activatePoll,
   closePoll
 } from "./polls.controller";
+import QuestionsRouter from "../questions/questions.routes";
 
 const router = Router();
 
@@ -278,5 +279,7 @@ router.post("/:id/activate", requireAuth, requireCreator, activatePoll);
  *         description: Poll not found
  */
 router.post("/:id/close", requireAuth, requireCreator, closePoll);
+
+router.use("/:id/questions", QuestionsRouter);
 
 export default router;
