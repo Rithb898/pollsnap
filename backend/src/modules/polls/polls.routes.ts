@@ -7,7 +7,9 @@ import {
   listPolls,
   updatePoll,
   deletePoll,
-  publishPoll
+  publishPoll,
+  activatePoll,
+  closePoll
 } from "./polls.controller";
 
 const router = Router();
@@ -216,5 +218,65 @@ router.delete("/:id", requireAuth, requireCreator, deletePoll);
  *         description: Poll not found
  */
 router.patch("/:id/publish", requireAuth, requireCreator, publishPoll);
+
+/**
+ * @swagger
+ * /polls/{id}/activate:
+ *   post:
+ *     summary: Activate poll
+ *     description: Transition poll from draft to active status (creator only). Requires at least one question with 2+ options and an expiry date.
+ *     tags: [Polls]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Poll activated
+ *       400:
+ *         description: Validation failed - poll must have questions with 2+ options and expiry date
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden (not creator)
+ *       404:
+ *         description: Poll not found
+ */
+router.post("/:id/activate", requireAuth, requireCreator, activatePoll);
+
+/**
+ * @swagger
+ * /polls/{id}/close:
+ *   post:
+ *     summary: Close poll
+ *     description: Transition poll from active to closed, then published immediately (creator only)
+ *     tags: [Polls]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Poll closed and published
+ *       400:
+ *         description: Poll not in active status
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden (not creator)
+ *       404:
+ *         description: Poll not found
+ */
+router.post("/:id/close", requireAuth, requireCreator, closePoll);
 
 export default router;

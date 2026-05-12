@@ -105,3 +105,33 @@ export const publishPoll = AsyncHandler(async (req: Request, res: Response) => {
 
   return ApiResponse.ok(res, "Poll published successfully", updatedPoll);
 });
+
+export const activatePoll = AsyncHandler(
+  async (req: Request, res: Response) => {
+    const ownerReq = req as PollOwnerRequest;
+    const { id } = req.params;
+
+    const activatedPoll = await pollsService.activatePoll(
+      id as string,
+      ownerReq.user!.id
+    );
+
+    return ApiResponse.ok(res, "Poll activated successfully", activatedPoll);
+  }
+);
+
+export const closePoll = AsyncHandler(async (req: Request, res: Response) => {
+  const ownerReq = req as PollOwnerRequest;
+  const { id } = req.params;
+
+  const closedPoll = await pollsService.closePoll(
+    id as string,
+    ownerReq.user!.id
+  );
+
+  return ApiResponse.ok(
+    res,
+    "Poll closed and published successfully",
+    closedPoll
+  );
+});

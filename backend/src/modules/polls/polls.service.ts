@@ -1,5 +1,5 @@
 import db from "@/db/db";
-import { poll, pollStatusEnum } from "@/drizzle";
+import { poll, pollStatusEnum, question, option } from "@/drizzle";
 import { eq, and, isNull, desc, sql } from "drizzle-orm";
 import { ApiError } from "@/shared/errors/api-error";
 import type {
@@ -179,6 +179,90 @@ export const publishPoll = async (id: string, userId: string) => {
       "Poll can only be published when in closed status"
     );
   }
+
+  const [publishedPoll] = await db
+    .update(poll)
+    .set({ status: "published" })
+    .where(eq(poll.id, id))
+    .returning();
+
+  return publishedPoll;
+};
+
+export const activatePoll = async (id: string, userId: string) => {
+  const existingPoll = await getPollById(id);
+
+  if (!existingPoll) {
+    throw ApiError.notFound("Poll not found");
+  }
+
+  if (existingPoll.creatorId !== userId) {
+    throw ApiError.forbidden("You are not the creator of this poll");
+  }
+
+  if (existingPoll.status !== "draft") {
+    throw ApiError.badRequest(
+      "Poll can only be activated when in draft status"
+    );
+  }
+
+  if (!existingPoll.expiresAt) {
+    throw ApiError.badRequest("Poll must have an expiry date to be activated");
+  }
+
+  const questions = await db
+    .select()
+    .from(question)
+    .where(eq(question.pollId, id));
+
+  if (questions.length === 0) {
+    throw ApiError.badRequest(
+      "Poll must have at least one question to be activated"
+    );
+  }
+
+  for (const q of questions) {
+    const optionsCount = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(option)
+      .where(eq(option.questionId, q.id));
+
+    if (optionsCount[0].count < 2) {
+      throw ApiError.badRequest(
+        `Question "${q.text}" must have at least two options to be activated`
+      );
+    }
+  }
+
+  const [activatedPoll] = await db
+    .update(poll)
+    .set({ status: "active" })
+    .where(eq(poll.id, id))
+    .returning();
+
+  return activatedPoll;
+};
+
+export const closePoll = async (id: string, userId: string) => {
+  const existingPoll = await getPollById(id);
+
+  if (!existingPoll) {
+    throw ApiError.notFound("Poll not found");
+  }
+
+  if (existingPoll.creatorId !== userId) {
+    throw ApiError.forbidden("You are not the creator of this poll");
+  }
+
+  if (existingPoll.status !== "active") {
+    throw ApiError.badRequest("Poll can only be closed when in active status");
+  }
+
+  const [closedPoll] = await db
+    .update(poll)
+    .set({ status: "closed" })
+    .where(eq(poll.id, id))
+    .returning();
 
   const [publishedPoll] = await db
     .update(poll)
