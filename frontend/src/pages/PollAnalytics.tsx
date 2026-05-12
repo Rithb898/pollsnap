@@ -1,4 +1,5 @@
-import { Link } from "react-router"
+import { useState, useEffect } from "react"
+import { Link, useParams } from "react-router"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -9,9 +10,35 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { BarChart3, Users, Clock, TrendingUp } from "lucide-react"
+import { BarChart3, Users, Clock, TrendingUp, WifiOff } from "lucide-react"
+import { useSocket } from "@/hooks/use-socket"
+import { ConnectionStatus } from "@/components/ConnectionStatus"
 
-const mockAnalytics = {
+interface Option {
+  id: string
+  text: string
+  votes: number
+  percentage: number
+  trend?: string
+}
+
+interface RecentVote {
+  id: string
+  option: string
+  time: string
+}
+
+interface PollData {
+  id: string
+  title: string
+  totalVotes: number
+  avgTimeToVote: string
+  completionRate: number
+  options: Option[]
+  recentVotes: RecentVote[]
+}
+
+const mockAnalytics: PollData = {
   id: "1",
   title: "Best programming language for beginners?",
   totalVotes: 60,
@@ -33,12 +60,77 @@ const mockAnalytics = {
 }
 
 export default function PollAnalytics() {
+  const { pollId } = useParams()
+  const [pollData, setPollData] = useState<PollData>(mockAnalytics)
+  const { isConnected, on } = useSocket("/creator", pollId || "")
+
+  useEffect(() => {
+    const unsubResponseNew = on<{ pollId: string; totalResponses: number }>(
+      "response:new",
+      (data) => {
+        setPollData((prev) => ({
+          ...prev,
+          totalVotes: data.totalResponses,
+        }))
+      }
+    )
+
+    const unsubVoteUpdate = on<{ pollId: string; optionId: string; count: number }>(
+      "vote:update",
+      (data) => {
+        setPollData((prev) => {
+          const newOptions = prev.options.map((opt) => {
+            if (opt.id === data.optionId) {
+              return { ...opt, votes: data.count }
+            }
+            return opt
+          })
+
+          const totalVotes = newOptions.reduce((sum, opt) => sum + opt.votes, 0)
+          const updatedOptions = newOptions.map((opt) => ({
+            ...opt,
+            percentage: totalVotes > 0 ? Math.round((opt.votes / totalVotes) * 100) : 0,
+          }))
+
+          return { ...prev, options: updatedOptions, totalVotes }
+        })
+      }
+    )
+
+    const unsubPollClosed = on<{ pollId: string }>("poll:closed", () => {})
+
+    const unsubPollPublished = on<{ pollId: string }>("poll:published", () => {})
+
+    return () => {
+      unsubResponseNew()
+      unsubVoteUpdate()
+      unsubPollClosed()
+      unsubPollPublished()
+    }
+  }, [on])
+
   return (
     <div className="space-y-6">
+      <ConnectionStatus />
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Poll Analytics</h1>
-          <p className="text-muted-foreground">{mockAnalytics.title}</p>
+        <div className="flex items-center gap-3">
+          <div>
+            <h1 className="text-2xl font-bold">Poll Analytics</h1>
+            <p className="text-muted-foreground">{pollData.title}</p>
+          </div>
+          <Badge variant={isConnected ? "default" : "secondary"} className={isConnected ? "bg-green-500" : ""}>
+            {isConnected ? (
+              <span className="flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                Live
+              </span>
+            ) : (
+              <span className="flex items-center gap-1">
+                <WifiOff className="h-3 w-3" />
+                Offline
+              </span>
+            )}
+          </Badge>
         </div>
         <Button variant="outline" render={<Link to="/dashboard" />}>
           Back to Dashboard
@@ -52,7 +144,7 @@ export default function PollAnalytics() {
               <Users className="h-4 w-4" />
               Total Votes
             </CardDescription>
-            <CardTitle className="text-3xl">{mockAnalytics.totalVotes}</CardTitle>
+            <CardTitle className="text-3xl">{pollData.totalVotes}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
@@ -61,7 +153,7 @@ export default function PollAnalytics() {
               <Clock className="h-4 w-4" />
               Avg. Time to Vote
             </CardDescription>
-            <CardTitle className="text-3xl">{mockAnalytics.avgTimeToVote}</CardTitle>
+            <CardTitle className="text-3xl">{pollData.avgTimeToVote}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
@@ -70,7 +162,7 @@ export default function PollAnalytics() {
               <TrendingUp className="h-4 w-4" />
               Completion Rate
             </CardDescription>
-            <CardTitle className="text-3xl">{mockAnalytics.completionRate}%</CardTitle>
+            <CardTitle className="text-3xl">{pollData.completionRate}%</CardTitle>
           </CardHeader>
         </Card>
         <Card>
@@ -79,7 +171,7 @@ export default function PollAnalytics() {
               <BarChart3 className="h-4 w-4" />
               Options
             </CardDescription>
-            <CardTitle className="text-3xl">{mockAnalytics.options.length}</CardTitle>
+            <CardTitle className="text-3xl">{pollData.options.length}</CardTitle>
           </CardHeader>
         </Card>
       </div>
@@ -96,7 +188,7 @@ export default function PollAnalytics() {
               <CardDescription>Breakdown of votes by option</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {mockAnalytics.options.map((option, index) => (
+              {pollData.options.map((option, index) => (
                 <div key={option.id} className="space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">
@@ -104,9 +196,11 @@ export default function PollAnalytics() {
                       {option.text}
                     </span>
                     <div className="flex items-center gap-2">
-                      <Badge variant={option.trend.startsWith("+") ? "default" : "secondary"}>
-                        {option.trend}
-                      </Badge>
+                      {option.trend && (
+                        <Badge variant={option.trend.startsWith("+") ? "default" : "secondary"}>
+                          {option.trend}
+                        </Badge>
+                      )}
                       <span className="text-sm text-muted-foreground">
                         {option.votes} votes ({option.percentage}%)
                       </span>
@@ -133,7 +227,7 @@ export default function PollAnalytics() {
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {mockAnalytics.recentVotes.map((vote) => (
+                {pollData.recentVotes.map((vote) => (
                   <div
                     key={vote.id}
                     className="flex items-center justify-between rounded-lg border p-3"
