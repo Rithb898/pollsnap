@@ -11,8 +11,10 @@ import {
   activatePoll,
   closePoll
 } from "./polls.controller";
+import { getResults } from "../analytics/analytics.controller";
 import QuestionsRouter from "../questions/questions.routes";
 import ResponsesRouter from "../responses/responses.routes";
+import AnalyticsRouter from "../analytics/analytics.routes";
 
 const router = Router();
 
@@ -283,5 +285,28 @@ router.post("/:id/close", requireAuth, requireCreator, closePoll);
 
 router.use("/:id/questions", QuestionsRouter);
 router.use("/:id/responses", ResponsesRouter);
+router.use("/:id/analytics", AnalyticsRouter);
+
+/**
+ * @swagger
+ * /polls/{id}/results:
+ *   get:
+ *     summary: Get poll results
+ *     description: Get public results for a published poll
+ *     tags: [Analytics]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Results data
+ *       404:
+ *         description: Poll not found or not published
+ */
+router.get("/:id/results", getResults);
 
 export default router;

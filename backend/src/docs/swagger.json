@@ -16,7 +16,8 @@
     { "name": "Polls", "description": "Poll management endpoints" },
     { "name": "Questions", "description": "Question management endpoints" },
     { "name": "Options", "description": "Option management endpoints" },
-    { "name": "Responses", "description": "Response submission endpoints" }
+    { "name": "Responses", "description": "Response submission endpoints" },
+    { "name": "Analytics", "description": "Analytics and results endpoints" }
   ],
   "paths": {
     "/health/": {
@@ -422,6 +423,44 @@
       "post": {
         "tags": ["Responses"],
         "description": "Submit response to a poll",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/polls/{id}/analytics": {
+      "get": {
+        "tags": ["Analytics"],
+        "description": "Get poll analytics (creator only)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/polls/{id}/results": {
+      "get": {
+        "tags": ["Analytics"],
+        "description": "Get public poll results (published polls only)",
         "parameters": [
           {
             "name": "id",
