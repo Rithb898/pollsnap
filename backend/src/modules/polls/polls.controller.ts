@@ -40,7 +40,7 @@ export const getPoll = AsyncHandler(async (req: Request, res: Response) => {
     throw ApiError.badRequest("Poll ID is required");
   }
 
-  const poll = await pollsService.getPollById(id as string);
+  const poll = await pollsService.getPollWithQuestions(id as string);
 
   if (!poll) {
     throw ApiError.notFound("Poll not found");

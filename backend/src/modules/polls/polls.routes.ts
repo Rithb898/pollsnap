@@ -12,6 +12,7 @@ import {
   closePoll
 } from "./polls.controller";
 import QuestionsRouter from "../questions/questions.routes";
+import ResponsesRouter from "../responses/responses.routes";
 
 const router = Router();
 
@@ -281,5 +282,6 @@ router.post("/:id/activate", requireAuth, requireCreator, activatePoll);
 router.post("/:id/close", requireAuth, requireCreator, closePoll);
 
 router.use("/:id/questions", QuestionsRouter);
+router.use("/:id/responses", ResponsesRouter);
 
 export default router;

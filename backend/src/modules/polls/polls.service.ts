@@ -55,6 +55,40 @@ export const getPollById = async (id: string) => {
   return foundPoll ?? null;
 };
 
+export const getPollWithQuestions = async (id: string) => {
+  const foundPoll = await getPollById(id);
+
+  if (!foundPoll) {
+    return null;
+  }
+
+  const questionsList = await db
+    .select()
+    .from(question)
+    .where(eq(question.pollId, id))
+    .orderBy(question.orderIndex);
+
+  const questionsWithOptions = await Promise.all(
+    questionsList.map(async q => {
+      const optionsList = await db
+        .select()
+        .from(option)
+        .where(eq(option.questionId, q.id))
+        .orderBy(option.orderIndex);
+
+      return {
+        ...q,
+        options: optionsList
+      };
+    })
+  );
+
+  return {
+    ...foundPoll,
+    questions: questionsWithOptions
+  };
+};
+
 export const listPolls = async (
   userId: string,
   query: ListPollsQuery

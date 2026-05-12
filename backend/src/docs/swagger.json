@@ -15,7 +15,8 @@
     { "name": "Users", "description": "User management endpoints" },
     { "name": "Polls", "description": "Poll management endpoints" },
     { "name": "Questions", "description": "Question management endpoints" },
-    { "name": "Options", "description": "Option management endpoints" }
+    { "name": "Options", "description": "Option management endpoints" },
+    { "name": "Responses", "description": "Response submission endpoints" }
   ],
   "paths": {
     "/health/": {
@@ -405,6 +406,25 @@
           },
           {
             "name": "optionId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/v1/polls/{id}/responses": {
+      "post": {
+        "tags": ["Responses"],
+        "description": "Submit response to a poll",
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
