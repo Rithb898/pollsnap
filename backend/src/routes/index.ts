@@ -1,10 +1,12 @@
 import { Router } from "express";
 import HealthRouter from "../modules/health/health.routes";
 import UsersRouter from "../modules/users/users.routes";
+import PollsRouter from "../modules/polls/polls.routes";
 
 const router = Router();
 
 router.use("/health", HealthRouter);
 router.use("/v1/users", UsersRouter);
+router.use("/v1/polls", PollsRouter);
 
 export default router;

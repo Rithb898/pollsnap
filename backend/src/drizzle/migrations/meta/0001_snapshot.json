@@ -110,12 +110,8 @@
           "name": "account_user_id_user_id_fk",
           "tableFrom": "account",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -202,12 +198,8 @@
           "name": "session_user_id_user_id_fk",
           "tableFrom": "session",
           "tableTo": "user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -217,9 +209,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -283,9 +273,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -411,12 +399,8 @@
           "name": "option_question_id_question_id_fk",
           "tableFrom": "option",
           "tableTo": "question",
-          "columnsFrom": [
-            "question_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["question_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -541,12 +525,8 @@
           "name": "poll_creator_id_user_id_fk",
           "tableFrom": "poll",
           "tableTo": "user",
-          "columnsFrom": [
-            "creator_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["creator_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -616,12 +596,8 @@
           "name": "question_poll_id_poll_id_fk",
           "tableFrom": "question",
           "tableTo": "poll",
-          "columnsFrom": [
-            "poll_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["poll_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -691,12 +667,8 @@
           "name": "response_poll_id_poll_id_fk",
           "tableFrom": "response",
           "tableTo": "poll",
-          "columnsFrom": [
-            "poll_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["poll_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -704,12 +676,8 @@
           "name": "response_respondent_id_user_id_fk",
           "tableFrom": "response",
           "tableTo": "user",
-          "columnsFrom": [
-            "respondent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["respondent_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -719,18 +687,12 @@
         "response_poll_respondent_unique": {
           "name": "response_poll_respondent_unique",
           "nullsNotDistinct": true,
-          "columns": [
-            "poll_id",
-            "respondent_id"
-          ]
+          "columns": ["poll_id", "respondent_id"]
         },
         "response_poll_session_unique": {
           "name": "response_poll_session_unique",
           "nullsNotDistinct": true,
-          "columns": [
-            "poll_id",
-            "session_token"
-          ]
+          "columns": ["poll_id", "session_token"]
         }
       },
       "policies": {},
@@ -789,12 +751,8 @@
           "name": "response_answer_response_id_response_id_fk",
           "tableFrom": "response_answer",
           "tableTo": "response",
-          "columnsFrom": [
-            "response_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["response_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -802,12 +760,8 @@
           "name": "response_answer_question_id_question_id_fk",
           "tableFrom": "response_answer",
           "tableTo": "question",
-          "columnsFrom": [
-            "question_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["question_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -815,12 +769,8 @@
           "name": "response_answer_option_id_option_id_fk",
           "tableFrom": "response_answer",
           "tableTo": "option",
-          "columnsFrom": [
-            "option_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["option_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -836,12 +786,7 @@
     "public.poll_status": {
       "name": "poll_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "active",
-        "closed",
-        "published"
-      ]
+      "values": ["draft", "active", "closed", "published"]
     }
   },
   "schemas": {},
