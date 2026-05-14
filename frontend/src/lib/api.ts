@@ -92,6 +92,7 @@ export interface PollDTO {
   createdAt: string
   updatedAt: string
   responseCount?: number
+  activityTrend?: number[]
 }
 
 export interface CreatePollDTO {

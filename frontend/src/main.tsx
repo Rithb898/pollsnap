@@ -19,6 +19,7 @@ import PollResults from './pages/PollResults'
 import CreatePoll from './pages/CreatePoll'
 import EditPoll from './pages/EditPoll'
 import PollAnalytics from './pages/PollAnalytics'
+import Polls from './pages/Polls'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -38,6 +39,7 @@ createRoot(document.getElementById('root')!).render(
 
           <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/polls" element={<Polls />} />
             <Route path="/polls/new" element={<CreatePoll />} />
             <Route path="/polls/:pollId/edit" element={<EditPoll />} />
             <Route path="/polls/:pollId/analytics" element={<PollAnalytics />} />

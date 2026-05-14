@@ -1,5 +1,5 @@
 import db from "@/db/db";
-import { poll, pollStatusEnum, question, option } from "@/drizzle";
+import { poll, pollStatusEnum, question, option, response } from "@/drizzle";
 import { eq, and, isNull, desc, sql } from "drizzle-orm";
 import { ApiError } from "@/shared/errors/api-error";
 import type {
@@ -25,7 +25,7 @@ export interface PaginationResult {
 }
 
 export interface ListPollsResult {
-  data: (typeof poll.$inferSelect)[];
+  data: ((typeof poll.$inferSelect) & { responseCount: number; activityTrend: number[] })[];
   pagination: PaginationResult;
 }
 
@@ -115,6 +115,41 @@ export const listPolls = async (
     .limit(limit)
     .offset(offset);
 
+  const pollsWithAnalytics = await Promise.all(
+    polls.map(async (p) => {
+      const respCountResult = await db
+        .select({ count: sql<number>`count(*)::int` })
+        .from(response)
+        .where(eq(response.pollId, p.id));
+      
+      const responseCount = respCountResult[0]?.count ?? 0;
+
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+      const recentResponses = await db
+        .select({ submittedAt: response.submittedAt })
+        .from(response)
+        .where(and(eq(response.pollId, p.id), sql`${response.submittedAt} >= ${sevenDaysAgo.toISOString()}`));
+
+      const trend = new Array(7).fill(0);
+      const today = new Date();
+      recentResponses.forEach(r => {
+        const diffTime = Math.abs(today.getTime() - new Date(r.submittedAt).getTime());
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0 && diffDays < 7) {
+          trend[6 - diffDays]++;
+        }
+      });
+
+      return {
+        ...p,
+        responseCount,
+        activityTrend: trend
+      };
+    })
+  );
+
   const countResult = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(poll)
@@ -124,7 +159,7 @@ export const listPolls = async (
   const totalPages = Math.ceil(total / limit);
 
   return {
-    data: polls,
+    data: pollsWithAnalytics,
     pagination: {
       page,
       limit,
