@@ -94,17 +94,7 @@ export const deletePoll = AsyncHandler(async (req: Request, res: Response) => {
   return ApiResponse.ok(res, "Poll deleted successfully");
 });
 
-export const publishPoll = AsyncHandler(async (req: Request, res: Response) => {
-  const ownerReq = req as PollOwnerRequest;
-  const { id } = req.params;
 
-  const updatedPoll = await pollsService.publishPoll(
-    id as string,
-    ownerReq.user!.id
-  );
-
-  return ApiResponse.ok(res, "Poll published successfully", updatedPoll);
-});
 
 export const activatePoll = AsyncHandler(
   async (req: Request, res: Response) => {
@@ -131,7 +121,7 @@ export const closePoll = AsyncHandler(async (req: Request, res: Response) => {
 
   return ApiResponse.ok(
     res,
-    "Poll closed and published successfully",
+    "Poll closed successfully",
     closedPoll
   );
 });

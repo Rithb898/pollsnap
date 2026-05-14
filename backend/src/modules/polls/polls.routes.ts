@@ -7,7 +7,6 @@ import {
   listPolls,
   updatePoll,
   deletePoll,
-  publishPoll,
   activatePoll,
   closePoll
 } from "./polls.controller";
@@ -42,7 +41,7 @@ const router = Router();
  *         name: status
  *         schema:
  *           type: string
- *           enum: [draft, active, closed, published]
+ *           enum: [draft, active, closed]
  *     responses:
  *       200:
  *         description: List of polls
@@ -193,35 +192,7 @@ router.patch("/:id", requireAuth, requireCreator, updatePoll);
  */
 router.delete("/:id", requireAuth, requireCreator, deletePoll);
 
-/**
- * @swagger
- * /polls/{id}/publish:
- *   patch:
- *     summary: Publish poll
- *     description: Transition poll from closed to published status (creator only)
- *     tags: [Polls]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *     responses:
- *       200:
- *         description: Poll published
- *       400:
- *         description: Poll not in closed status
- *       401:
- *         description: Unauthorized
- *       403:
- *         description: Forbidden (not creator)
- *       404:
- *         description: Poll not found
- */
-router.patch("/:id/publish", requireAuth, requireCreator, publishPoll);
+
 
 /**
  * @swagger
@@ -258,7 +229,7 @@ router.post("/:id/activate", requireAuth, requireCreator, activatePoll);
  * /polls/{id}/close:
  *   post:
  *     summary: Close poll
- *     description: Transition poll from active to closed, then published immediately (creator only)
+ *     description: Transition poll from active to closed (creator only)
  *     tags: [Polls]
  *     security:
  *       - bearerAuth: []
@@ -271,7 +242,7 @@ router.post("/:id/activate", requireAuth, requireCreator, activatePoll);
  *           format: uuid
  *     responses:
  *       200:
- *         description: Poll closed and published
+ *         description: Poll closed
  *       400:
  *         description: Poll not in active status
  *       401:
@@ -292,7 +263,7 @@ router.use("/:id/analytics", AnalyticsRouter);
  * /polls/{id}/results:
  *   get:
  *     summary: Get poll results
- *     description: Get public results for a published poll
+ *     description: Get public results for a closed or active poll
  *     tags: [Analytics]
  *     parameters:
  *       - in: path
@@ -305,7 +276,7 @@ router.use("/:id/analytics", AnalyticsRouter);
  *       200:
  *         description: Results data
  *       404:
- *         description: Poll not found or not published
+ *         description: Poll not found or not available
  */
 router.get("/:id/results", getResults);
 

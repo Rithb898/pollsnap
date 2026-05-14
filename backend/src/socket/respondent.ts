@@ -9,10 +9,9 @@ interface RespondentSocket extends Socket {
   pollId?: string;
 }
 
-const ACTIVE_POLL_STATUSES: Array<"active" | "closed" | "published"> = [
+const ACTIVE_POLL_STATUSES: Array<"active" | "closed"> = [
   "active",
-  "closed",
-  "published"
+  "closed"
 ];
 
 export const setupRespondentNamespace = (io: Server): void => {
@@ -41,7 +40,7 @@ export const setupRespondentNamespace = (io: Server): void => {
       }
 
       const isValidStatus = ACTIVE_POLL_STATUSES.includes(
-        pollData.status as "active" | "closed" | "published"
+        pollData.status as "active" | "closed"
       );
 
       respondentSocket.pollId = pollId;

@@ -57,7 +57,7 @@ export const listPollsQuerySchema = z.object({
     .positive("Limit must be positive")
     .max(100, "Limit must be 100 or less")
     .default(10),
-  status: z.enum(["draft", "active", "closed", "published"]).optional()
+  status: z.enum(["draft", "active", "closed"]).optional()
 });
 
 export type CreatePollInput = z.infer<typeof createPollSchema>;

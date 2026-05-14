@@ -80,6 +80,7 @@ export const SWR_KEYS = {
   dashboardAudienceInsights: () => ["/api/v1/dashboard/audience-insights"] as const,
   dashboardPlanUsage: () => ["/api/v1/dashboard/plan-usage"] as const,
   pollAnalytics: (pollId: string) => [`/api/v1/polls/${pollId}/analytics`] as const,
+  publicResults: (pollId: string) => [`/api/v1/polls/${pollId}/results`] as const,
 }
 
 export interface PollDTO {
@@ -89,7 +90,7 @@ export interface PollDTO {
   isAnonymous: boolean
   expiresAt?: string
   responseGoal?: number
-  status: "draft" | "published"
+  status: "draft" | "active" | "closed"
   createdAt: string
   updatedAt: string
   responseCount?: number
@@ -201,6 +202,14 @@ export const optionsApi = {
     ),
 }
 
+export const responsesApi = {
+  submit: (pollId: string, data: { answers: { questionId: string; optionId: string }[] }) =>
+    api.post<{ success: boolean; responseId: string }>(
+      `/api/v1/polls/${pollId}/responses`,
+      data
+    ),
+}
+
 export interface DashboardStatsDTO {
   totalPolls: number
   activePolls: number
@@ -270,4 +279,6 @@ export interface PollAnalyticsDTO {
 export const analyticsApi = {
   getPollAnalytics: (pollId: string) =>
     fetcher(`/api/v1/polls/${pollId}/analytics`) as Promise<PollAnalyticsDTO>,
+  getPublicResults: (pollId: string) =>
+    fetcher(`/api/v1/polls/${pollId}/results`) as Promise<PollAnalyticsDTO>,
 }

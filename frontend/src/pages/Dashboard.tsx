@@ -37,7 +37,7 @@ export default function Dashboard() {
 
   const polls = pollsData?.data || []
   const totalPolls = pollsData?.pagination?.total || polls.length
-  const publishedPolls = polls.filter((p) => p.status === "published" || p.status === "active").length
+  const publishedPolls = polls.filter((p) => p.status === "closed" || p.status === "active").length
 
   return (
     // <div className="space-y-8 max-w-7xl mx-auto pb-24">
@@ -129,7 +129,7 @@ export default function Dashboard() {
                 className="group flex-shrink-0 w-[280px] snap-start bg-card border border-border rounded-2xl p-5 transition-all hover:shadow-lg hover:border-primary/30"
               >
                 <div className="flex items-start justify-between mb-3">
-                  <Badge variant={poll.status === "active" || poll.status === "published" ? "default" : "secondary"} className="text-[10px] uppercase tracking-wider font-bold">
+                  <Badge variant={poll.status === "active" ? "default" : "secondary"} className="text-[10px] uppercase tracking-wider font-bold">
                     {poll.status}
                   </Badge>
                   <div className="text-sm font-heading font-bold">
@@ -149,7 +149,7 @@ export default function Dashboard() {
                       <Edit className="mr-1 h-3 w-3" /> Edit
                     </Button>
                   )}
-                  {(poll.status === "published" || poll.status === "active") && (
+                  {(poll.status === "closed" || poll.status === "active") && (
                     <>
                       <Button
                         variant="outline"

@@ -31,7 +31,7 @@ export function PollCard({ poll, viewMode, isFeatured }: PollCardProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  const isPublished = poll.status === "published"
+  const isPublished = poll.status === "closed" // Adjusted to "closed" since "published" is removed
   const responseCount = poll.responseCount || 0
   const goal = poll.responseGoal || 0
   const progress = goal > 0 ? Math.min(100, Math.round((responseCount / goal) * 100)) : 0

@@ -233,33 +233,7 @@ export const deletePoll = async (id: string, userId: string) => {
   return deletedPoll;
 };
 
-export const publishPoll = async (id: string, userId: string) => {
-  const existingPoll = await getPollById(id);
 
-  if (!existingPoll) {
-    throw ApiError.notFound("Poll not found");
-  }
-
-  if (existingPoll.creatorId !== userId) {
-    throw ApiError.forbidden("You are not the creator of this poll");
-  }
-
-  if (existingPoll.status !== "closed") {
-    throw ApiError.badRequest(
-      "Poll can only be published when in closed status"
-    );
-  }
-
-  const [publishedPoll] = await db
-    .update(poll)
-    .set({ status: "published" })
-    .where(eq(poll.id, id))
-    .returning();
-
-  emitPollPublished(id);
-
-  return publishedPoll;
-};
 
 export const activatePoll = async (id: string, userId: string) => {
   const existingPoll = await getPollById(id);
@@ -336,14 +310,7 @@ export const closePoll = async (id: string, userId: string) => {
     .where(eq(poll.id, id))
     .returning();
 
-  const [publishedPoll] = await db
-    .update(poll)
-    .set({ status: "published" })
-    .where(eq(poll.id, id))
-    .returning();
-
   emitPollClosed(id);
-  emitPollPublished(id);
 
-  return publishedPoll;
+  return closedPoll;
 };

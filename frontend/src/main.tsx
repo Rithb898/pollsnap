@@ -15,7 +15,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import PublicPoll from './pages/PublicPoll'
-import PollResults from './pages/PollResults'
+
 import CreatePoll from './pages/CreatePoll'
 import EditPoll from './pages/EditPoll'
 import PollAnalytics from './pages/PollAnalytics'
@@ -30,7 +30,7 @@ createRoot(document.getElementById('root')!).render(
           <Route element={<RootLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/poll/:pollId" element={<PublicPoll />} />
-            <Route path="/poll/:pollId/results" element={<PollResults />} />
+
           </Route>
 
           <Route element={<AuthLayout />}>

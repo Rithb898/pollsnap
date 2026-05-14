@@ -5,13 +5,19 @@ import { AsyncHandler } from "@/shared/utils/async-handler";
 import { AuthenticatedRequest } from "@/shared/middlewares/requireAuth";
 import * as responsesService from "./responses.service";
 import { submitResponseSchema } from "./responses.schema";
+import { auth } from "@/lib/auth";
+import { fromNodeHeaders } from "better-auth/node";
 
 export const submitResponse = AsyncHandler(
   async (req: Request, res: Response) => {
     const pollId = req.params.id as string;
-    const authReq = req as AuthenticatedRequest;
-
-    const userId = authReq.user?.id ?? null;
+    
+    // Extract session directly since this route doesn't use requireAuth
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(req.headers)
+    });
+    
+    const userId = session?.user?.id ?? null;
     const sessionToken = req.cookies?.session_token ?? null;
 
     const parseResult = submitResponseSchema.safeParse(req.body);

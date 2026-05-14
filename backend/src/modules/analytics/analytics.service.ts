@@ -54,7 +54,7 @@ export const getPollAnalytics = async (
     throw ApiError.notFound("Poll not found");
   }
 
-  if (existingPoll.status !== "active" && existingPoll.status !== "published") {
+  if (existingPoll.status !== "active" && existingPoll.status !== "closed") {
     throw ApiError.badRequest("Analytics not available for this poll status");
   }
 
@@ -167,7 +167,7 @@ export const getPollResults = async (pollId: string): Promise<PollResults> => {
     .where(and(eq(poll.id, pollId), isNull(poll.deletedAt)))
     .limit(1);
 
-  if (!existingPoll || existingPoll.status !== "published") {
+  if (!existingPoll || !["active", "closed"].includes(existingPoll.status)) {
     throw ApiError.notFound("Poll not found");
   }
 

@@ -53,13 +53,11 @@ export default function PollAnalytics() {
     )
 
     const unsubPollClosed = on<{ pollId: string }>("poll:closed", () => { mutate() })
-    const unsubPollPublished = on<{ pollId: string }>("poll:published", () => { mutate() })
 
     return () => {
       unsubResponseNew()
       unsubVoteUpdate()
       unsubPollClosed()
-      unsubPollPublished()
     }
   }, [on, pollId, mutate])
 

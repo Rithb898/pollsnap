@@ -15,8 +15,7 @@ import { user } from "./user.schema";
 export const pollStatusEnum = pgEnum("poll_status", [
   "draft",
   "active",
-  "closed",
-  "published"
+  "closed"
 ]);
 
 export const poll = pgTable(
@@ -88,11 +87,9 @@ export const response = pgTable(
   table => [
     index("response_poll_id_idx").on(table.pollId),
     unique("response_poll_respondent_unique")
-      .on(table.pollId, table.respondentId)
-      .nullsNotDistinct(),
+      .on(table.pollId, table.respondentId),
     unique("response_poll_session_unique")
       .on(table.pollId, table.sessionToken)
-      .nullsNotDistinct()
   ]
 );
 

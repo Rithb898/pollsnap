@@ -6,11 +6,13 @@ import { useAuthStore } from "@/store/auth-store"
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Loader2, ArrowRight } from "lucide-react"
+import { Loader2, ArrowRight, Eye, EyeOff } from "lucide-react"
+import { useState } from "react"
 
 export default function Login() {
   const navigate = useNavigate()
   const { login, isLoading } = useAuthStore()
+  const [showPassword, setShowPassword] = useState(false)
 
   const form = useForm({
     defaultValues: {
@@ -101,15 +103,24 @@ export default function Login() {
                     data-invalid={field.state.meta.isTouched && !field.state.meta.isValid}
                   >
                     <FieldLabel htmlFor="password" className="font-heading text-sm uppercase tracking-wider font-bold">Password</FieldLabel>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      className="border-0 border-b-2 border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary text-xl h-12"
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder="••••••••"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        className="border-0 border-b-2 border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary text-xl h-12 pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    </div>
                     {field.state.meta.isTouched && !field.state.meta.isValid && (
                       <FieldError errors={field.state.meta.errors} />
                     )}

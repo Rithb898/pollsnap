@@ -2,7 +2,6 @@ export const SOCKET_EVENTS = {
   RESPONSE_NEW: "response:new",
   VOTE_UPDATE: "vote:update",
   POLL_CLOSED: "poll:closed",
-  POLL_PUBLISHED: "poll:published",
   ERROR: "error"
 } as const;
 

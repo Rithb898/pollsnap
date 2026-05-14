@@ -10,7 +10,7 @@ const router = Router({ mergeParams: true });
  * /polls/{pollId}/analytics:
  *   get:
  *     summary: Get poll analytics
- *     description: Get detailed analytics for a poll (creator only, active/published polls only)
+ *     description: Get detailed analytics for a poll (creator only, active/closed polls only)
  *     tags: [Analytics]
  *     security:
  *       - bearerAuth: []
