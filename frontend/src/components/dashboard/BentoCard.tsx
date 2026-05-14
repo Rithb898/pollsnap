@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils"
 import { cva, type VariantProps } from "class-variance-authority"
 
 const bentoCardVariants = cva(
-  "rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg",
+  "relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg",
   {
     variants: {
       variant: {

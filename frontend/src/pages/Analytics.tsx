@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Download, TrendingUp, Users, Monitor, Globe, Activity, Trophy, MapPin, Laptop, Smartphone, Target } from "lucide-react"
-import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, BarChart, Bar } from "recharts"
+import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, } from "recharts"
 import { toast } from "sonner"
 
 // --- Mock Data ---
@@ -71,7 +71,7 @@ export default function Analytics() {
   }
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-24">
+    <div className="container space-y-8 mx-auto px-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>

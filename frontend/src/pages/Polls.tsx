@@ -35,7 +35,7 @@ export default function Polls() {
   const hasPolls = rawPolls.length > 0
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="container space-y-8 mx-auto px-4">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
