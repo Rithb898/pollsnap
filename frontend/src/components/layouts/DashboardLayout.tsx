@@ -22,7 +22,6 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/polls", label: "My Polls", icon: ListTodo },
   { href: "/analytics", label: "Analytics", icon: PieChart },
-  { href: "/templates", label: "Templates", icon: Library },
 ]
 
 export default function DashboardLayout() {

@@ -79,6 +79,7 @@ export const SWR_KEYS = {
   dashboardRecentActivity: () => ["/api/v1/dashboard/recent-activity"] as const,
   dashboardAudienceInsights: () => ["/api/v1/dashboard/audience-insights"] as const,
   dashboardPlanUsage: () => ["/api/v1/dashboard/plan-usage"] as const,
+  pollAnalytics: (pollId: string) => [`/api/v1/polls/${pollId}/analytics`] as const,
 }
 
 export interface PollDTO {
@@ -236,4 +237,37 @@ export const dashboardApi = {
   getRecentActivity: () => fetcher("/api/v1/dashboard/recent-activity") as Promise<RecentActivityDTO[]>,
   getAudienceInsights: () => fetcher("/api/v1/dashboard/audience-insights") as Promise<AudienceInsightsDTO>,
   getPlanUsage: () => fetcher("/api/v1/dashboard/plan-usage") as Promise<PlanUsageDTO>,
+}
+
+export interface QuestionAnalyticsDTO {
+  id: string
+  text: string
+  isMandatory: boolean
+  totalAnswers: number
+  options: {
+    id: string
+    text: string
+    count: number
+    percentage: number
+  }[]
+}
+
+export interface PollAnalyticsDTO {
+  poll: {
+    id: string
+    title: string
+    description: string | null
+    responseGoal: number | null
+    status: string
+  }
+  totalResponses: number
+  goalProgress: number | null
+  completionRate: number
+  questions: QuestionAnalyticsDTO[]
+  recentVotes: { id: string; time: string }[]
+}
+
+export const analyticsApi = {
+  getPollAnalytics: (pollId: string) =>
+    fetcher(`/api/v1/polls/${pollId}/analytics`) as Promise<PollAnalyticsDTO>,
 }

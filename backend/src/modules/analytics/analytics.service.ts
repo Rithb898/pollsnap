@@ -28,6 +28,7 @@ export interface PollAnalytics {
   goalProgress: number | null;
   completionRate: number;
   questions: QuestionAnalytics[];
+  recentVotes: { id: string; time: string }[];
 }
 
 export interface PollResults {
@@ -131,6 +132,18 @@ export const getPollAnalytics = async (
       ? (totalResponses / existingPoll.responseGoal) * 100
       : null;
 
+  const recentResponsesQuery = await db
+    .select({ id: response.id, submittedAt: response.submittedAt })
+    .from(response)
+    .where(eq(response.pollId, pollId))
+    .orderBy(sql`${response.submittedAt} DESC`)
+    .limit(10);
+
+  const recentVotes = recentResponsesQuery.map(r => ({
+    id: r.id,
+    time: r.submittedAt.toISOString()
+  }));
+
   return {
     poll: {
       id: existingPoll.id,
@@ -142,7 +155,8 @@ export const getPollAnalytics = async (
     totalResponses,
     goalProgress,
     completionRate,
-    questions: questionsAnalytics
+    questions: questionsAnalytics,
+    recentVotes
   };
 };
 

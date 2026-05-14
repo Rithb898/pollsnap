@@ -19,6 +19,7 @@ import PollResults from './pages/PollResults'
 import CreatePoll from './pages/CreatePoll'
 import EditPoll from './pages/EditPoll'
 import PollAnalytics from './pages/PollAnalytics'
+import Analytics from './pages/Analytics'
 import Polls from './pages/Polls'
 
 createRoot(document.getElementById('root')!).render(
@@ -43,6 +44,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/polls/new" element={<CreatePoll />} />
             <Route path="/polls/:pollId/edit" element={<EditPoll />} />
             <Route path="/polls/:pollId/analytics" element={<PollAnalytics />} />
+            <Route path="/analytics" element={<Analytics />} />
           </Route>
         </Routes>
         <Toaster richColors position="top-right" />
