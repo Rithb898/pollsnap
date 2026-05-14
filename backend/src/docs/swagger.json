@@ -17,7 +17,8 @@
     { "name": "Questions", "description": "Question management endpoints" },
     { "name": "Options", "description": "Option management endpoints" },
     { "name": "Responses", "description": "Response submission endpoints" },
-    { "name": "Analytics", "description": "Analytics and results endpoints" }
+    { "name": "Analytics", "description": "Analytics and results endpoints" },
+    { "name": "Dashboard", "description": "Dashboard endpoints" }
   ],
   "paths": {
     "/health/": {
@@ -40,6 +41,44 @@
             "description": ""
           }
         }
+      }
+    },
+    "/v1/dashboard/stats": {
+      "get": {
+        "tags": ["Dashboard"],
+        "description": "Get dashboard stats",
+        "responses": { "default": { "description": "" } }
+      }
+    },
+    "/v1/dashboard/trends": {
+      "get": {
+        "tags": ["Dashboard"],
+        "description": "Get dashboard trends",
+        "parameters": [
+          { "name": "days", "in": "query", "required": false, "type": "integer" }
+        ],
+        "responses": { "default": { "description": "" } }
+      }
+    },
+    "/v1/dashboard/recent-activity": {
+      "get": {
+        "tags": ["Dashboard"],
+        "description": "Get recent activity",
+        "responses": { "default": { "description": "" } }
+      }
+    },
+    "/v1/dashboard/audience-insights": {
+      "get": {
+        "tags": ["Dashboard"],
+        "description": "Get audience insights",
+        "responses": { "default": { "description": "" } }
+      }
+    },
+    "/v1/dashboard/plan-usage": {
+      "get": {
+        "tags": ["Dashboard"],
+        "description": "Get plan usage",
+        "responses": { "default": { "description": "" } }
       }
     },
     "/v1/users/me": {

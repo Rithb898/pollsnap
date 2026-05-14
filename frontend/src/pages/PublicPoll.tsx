@@ -1,16 +1,8 @@
 import { useState, useEffect } from "react"
 import { Link, useParams, useNavigate } from "react-router"
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { WifiOff } from "lucide-react"
+import { WifiOff, ArrowRight } from "lucide-react"
 import { useSocket } from "@/hooks/use-socket"
 import { ConnectionStatus } from "@/components/ConnectionStatus"
 
@@ -121,82 +113,83 @@ export default function PublicPoll() {
   }
 
   return (
-    <div className="container flex min-h-[calc(100vh-8rem)] items-center justify-center py-12">
+    <div className="min-h-screen flex flex-col pt-12 pb-24 px-6 md:px-12 max-w-5xl mx-auto animate-in fade-in duration-700">
       <ConnectionStatus />
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle className="text-2xl">{pollData.title}</CardTitle>
-              <CardDescription className="mt-2">
-                {pollData.description}
-              </CardDescription>
+      
+      <div className="flex items-center justify-between mb-16 animate-in slide-in-from-top-4 duration-500">
+        <Link to="/" className="text-xl font-bold font-heading">
+          PollSnap.
+        </Link>
+        {getStatusBadge()}
+      </div>
+
+      <div className="space-y-4 mb-20 animate-in slide-in-from-bottom-8 duration-700 delay-150 fill-mode-both">
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-black leading-[1.1] tracking-tight uppercase">
+          {pollData.title}
+        </h1>
+        {pollData.description && (
+          <p className="text-xl md:text-2xl text-muted-foreground font-medium max-w-2xl border-l-4 border-primary pl-4">
+            {pollData.description}
+          </p>
+        )}
+      </div>
+
+      <div className="grid gap-4 w-full animate-in slide-in-from-bottom-8 duration-700 delay-300 fill-mode-both">
+        {pollData.options.map((option, index) => {
+          const isClosed = pollData.status === "closed" || pollData.status === "published"
+          return (
+            <div
+              key={option.id}
+              className={`relative overflow-hidden border-2 border-border p-6 md:p-8 transition-all duration-300 group
+                ${isClosed ? '' : 'cursor-pointer hover:border-primary hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_var(--color-primary)]'}
+              `}
+            >
+              <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <span className="text-2xl md:text-3xl font-bold font-heading tracking-tight flex items-center gap-4">
+                  <span className="text-muted-foreground text-lg">{(index + 1).toString().padStart(2, '0')}</span>
+                  {option.text}
+                </span>
+                
+                {(isClosed || option.percentage > 0) && (
+                  <span className="text-3xl md:text-4xl font-black font-heading text-primary bg-background px-4 py-2 border-2 border-primary rotate-2 group-hover:rotate-0 transition-transform">
+                    {option.percentage}%
+                  </span>
+                )}
+              </div>
+              
+              {(isClosed || option.percentage > 0) && (
+                <div
+                  className="absolute inset-0 z-0 bg-primary/20 origin-left transition-transform duration-1000 ease-out"
+                  style={{ transform: `scaleX(${option.percentage / 100})` }}
+                />
+              )}
             </div>
-            {getStatusBadge()}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {pollData.status === "closed" || pollData.status === "published" ? (
-            pollData.options.map((option, index) => (
-              <div
-                key={option.id}
-                className="relative overflow-hidden rounded-lg border p-4"
-              >
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="font-medium">
-                    {index === 0 && "🏆 "}
-                    {option.text}
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {option.percentage}%
-                  </span>
-                </div>
-                <div
-                  className="absolute inset-0 z-0 bg-muted/50 origin-left"
-                  style={{ transform: `scaleX(${option.percentage / 100})` }}
-                />
-              </div>
-            ))
-          ) : (
-            pollData.options.map((option) => (
-              <div
-                key={option.id}
-                className="relative overflow-hidden rounded-lg border p-4 transition-colors hover:bg-muted/50 cursor-pointer"
-              >
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="font-medium">{option.text}</span>
-                  <span className="text-sm text-muted-foreground">
-                    {option.percentage}%
-                  </span>
-                </div>
-                <div
-                  className="absolute inset-0 z-0 bg-muted/50 origin-left"
-                  style={{ transform: `scaleX(${option.percentage / 100})` }}
-                />
-              </div>
-            ))
-          )}
-        </CardContent>
-        <CardFooter className="justify-between">
+          )
+        })}
+      </div>
+
+      <div className="mt-16 flex flex-col sm:flex-row items-center justify-between gap-6 border-t-2 border-border pt-8 animate-in fade-in duration-1000 delay-500 fill-mode-both">
+        <div className="text-muted-foreground font-heading font-bold uppercase tracking-widest text-sm">
+          {pollData.totalVotes} Total Responses
+        </div>
+        
+        <div className="flex gap-4">
           <Button
             variant="outline"
+            size="lg"
+            className="border-2 font-bold font-heading uppercase tracking-wider"
             render={<Link to={`/poll/${pollId}/results`} />}
           >
-            View Results
+            Results
           </Button>
+          
           {pollData.status === "active" && (
-            <Button>Submit Vote</Button>
-          )}
-          {pollData.status === "closed" && (
-            <Button disabled>This poll has ended</Button>
-          )}
-          {pollData.status === "published" && (
-            <Button onClick={() => navigate(`/poll/${pollId}/results`)}>
-              See Full Results
+            <Button size="lg" className="font-bold font-heading uppercase tracking-wider h-12 px-8 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#09090b] transition-all">
+              Submit Vote <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           )}
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

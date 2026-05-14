@@ -2,147 +2,176 @@ import { Link } from "react-router"
 import { useAuthStore } from "@/store/auth-store"
 import useSWR from "swr"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
-import { Plus, BarChart3, Edit } from "lucide-react"
-import { pollsApi, SWR_KEYS, type PollDTO } from "@/lib/api"
+import { Copy, Plus, BarChart3, Edit, ArrowRight } from "lucide-react"
+import { toast } from "sonner"
+import { pollsApi, SWR_KEYS, dashboardApi, type PollDTO } from "@/lib/api"
+import { StatsCard } from "@/components/dashboard/StatsCard"
+import { TrendChart } from "@/components/dashboard/TrendChart"
+import { QuickActionsCard } from "@/components/dashboard/QuickActionsCard"
+import { TemplatesCard } from "@/components/dashboard/TemplatesCard"
+import { CompletionRate } from "@/components/dashboard/CompletionRate"
+import { RecentActivityCard } from "@/components/dashboard/RecentActivityCard"
+import { AudienceInsightsCard } from "@/components/dashboard/AudienceInsightsCard"
+import { PlanUsageCard } from "@/components/dashboard/PlanUsageCard"
+import { ProTipCard } from "@/components/dashboard/ProTipCard"
 
 export default function Dashboard() {
   const { user } = useAuthStore()
   
-  const { data: pollsData, isLoading } = useSWR(
+  const { data: pollsData, isLoading: pollsLoading } = useSWR(
     SWR_KEYS.polls(),
-    () => pollsApi.list(1, 10) as Promise<{ polls: PollDTO[]; total: number }>
+    () => pollsApi.list(1, 10) as Promise<{ data: PollDTO[]; pagination: { total: number } }>
   )
 
-  const polls = pollsData?.polls || []
+  const { data: stats, isLoading: statsLoading } = useSWR(
+    SWR_KEYS.dashboardStats(),
+    () => dashboardApi.getStats()
+  )
 
-  const totalPolls = polls.length
-  const publishedPolls = polls.filter((p) => p.status === "published").length
-  const totalResponses = polls.reduce((acc, p) => acc + (p.responseCount || 0), 0)
+  const { data: trends, isLoading: trendsLoading } = useSWR(
+    SWR_KEYS.dashboardTrends(7),
+    () => dashboardApi.getTrends(7)
+  )
+
+  const polls = pollsData?.data || []
+  const totalPolls = pollsData?.pagination?.total || polls.length
+  const publishedPolls = polls.filter((p) => p.status === "published" || p.status === "active").length
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 max-w-7xl mx-auto pb-24">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">
-            Welcome back, {user?.name || "User"}
+          <h1 className="text-3xl md:text-4xl font-heading font-bold tracking-tight">
+            Dashboard
           </h1>
-          <p className="text-muted-foreground">
-            Manage your polls and view analytics
+          <p className="text-muted-foreground mt-1">
+            Welcome back, <span className="text-foreground font-medium">{user?.name || "User"}</span>.
           </p>
         </div>
-        <Button render={<Link to="/polls/new" />}>
+        <Button size="lg" className="font-heading uppercase tracking-wider font-bold" render={<Link to="/polls/new" />}>
           <Plus className="mr-2 h-4 w-4" />
-          New Poll
+          Create New Poll
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Total Polls</CardDescription>
-            {isLoading ? (
-              <Spinner className="h-8 w-8" />
-            ) : (
-              <CardTitle className="text-3xl">{totalPolls}</CardTitle>
-            )}
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Published</CardDescription>
-            {isLoading ? (
-              <Spinner className="h-8 w-8" />
-            ) : (
-              <CardTitle className="text-3xl">{publishedPolls}</CardTitle>
-            )}
-          </CardHeader>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription>Total Responses</CardDescription>
-            {isLoading ? (
-              <Spinner className="h-8 w-8" />
-            ) : (
-              <CardTitle className="text-3xl">{totalResponses}</CardTitle>
-            )}
-          </CardHeader>
-        </Card>
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        {/* Row 1 & 2 */}
+        <TrendChart data={trends} loading={trendsLoading} className="col-span-2 md:col-span-4 lg:col-span-4 row-span-2" />
+        
+        <StatsCard
+          title="Total Responses"
+          value={stats?.totalResponses ?? polls.reduce((acc, p) => acc + (p.responseCount || 0), 0)}
+          loading={statsLoading}
+          variant="primary"
+          className="col-span-2 md:col-span-2 lg:col-span-2 row-span-2"
+        />
+        
+        {/* Row 3 */}
+        <StatsCard
+          title="Total Polls"
+          value={stats?.totalPolls ?? totalPolls}
+          loading={statsLoading}
+          icon={<BarChart3 className="h-4 w-4" />}
+          className="col-span-1 md:col-span-2 lg:col-span-2"
+        />
+        
+        <StatsCard
+          title="Active Polls"
+          value={stats?.activePolls ?? publishedPolls}
+          loading={statsLoading}
+          variant="secondary"
+          className="col-span-1 md:col-span-2 lg:col-span-2"
+        />
+        
+        <CompletionRate rate={stats?.completionRate ?? 0} loading={statsLoading} className="col-span-2 md:col-span-4 lg:col-span-2" />
+
+        {/* Row 4 */}
+        <RecentActivityCard className="col-span-2 md:col-span-4 lg:col-span-3 lg:row-span-2" />
+        
+        <QuickActionsCard className="col-span-2 md:col-span-2 lg:col-span-3" />
+        
+        {/* Row 5 */}
+        <TemplatesCard className="col-span-2 md:col-span-2 lg:col-span-3" />
+        
+        {/* Row 6 */}
+        <AudienceInsightsCard className="col-span-2 md:col-span-4 lg:col-span-4" />
+        <PlanUsageCard className="col-span-2 md:col-span-2 lg:col-span-2" />
+
+        {/* Row 7 */}
+        <ProTipCard className="col-span-2 md:col-span-6 lg:col-span-6" />
       </div>
 
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Your Polls</h2>
-        {isLoading ? (
-          <div className="flex justify-center py-8">
+      <div className="space-y-4 pt-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-bold font-heading uppercase tracking-widest">Your Polls</h2>
+        </div>
+        
+        {pollsLoading ? (
+          <div className="flex justify-center py-12">
             <Spinner className="h-8 w-8" />
           </div>
         ) : polls.length === 0 ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>No polls yet</CardTitle>
-              <CardDescription>
-                Create your first poll to get started
-              </CardDescription>
-            </CardHeader>
-            <CardFooter>
-              <Button render={<Link to="/polls/new" />}>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Poll
-              </Button>
-            </CardFooter>
-          </Card>
+          <div className="border border-dashed border-border rounded-2xl p-12 text-center flex flex-col items-center">
+            <h3 className="text-xl font-heading font-bold mb-2">No polls yet</h3>
+            <p className="text-muted-foreground mb-6">Your audience is waiting.</p>
+            <Button className="font-heading uppercase tracking-wider" render={<Link to="/polls/new" />}>
+              Start Polling
+            </Button>
+          </div>
         ) : (
-          <div className="grid gap-4">
+          <div className="flex overflow-x-auto pb-4 gap-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
             {polls.map((poll) => (
-              <Card key={poll.id}>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle>{poll.title}</CardTitle>
-                      <CardDescription>
-                        Created on {new Date(poll.createdAt).toLocaleDateString()}
-                      </CardDescription>
-                    </div>
-                    <Badge
-                      variant={poll.status === "published" ? "default" : "secondary"}
-                    >
-                      {poll.status}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardFooter className="justify-between">
-                  <span className="text-sm text-muted-foreground">
+              <div 
+                key={poll.id} 
+                className="group flex-shrink-0 w-[280px] snap-start bg-card border border-border rounded-2xl p-5 transition-all hover:shadow-lg hover:border-primary/30"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <Badge variant={poll.status === "active" || poll.status === "published" ? "default" : "secondary"} className="text-[10px] uppercase tracking-wider font-bold">
+                    {poll.status}
+                  </Badge>
+                  <div className="text-sm font-heading font-bold">
                     {poll.responseCount || 0} responses
-                  </span>
-                  <div className="flex gap-2">
-                    {poll.status === "draft" && (
-                      <Button variant="outline" size="sm" render={<Link to={`/polls/${poll.id}/edit`} />}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit
-                      </Button>
-                    )}
-                    {poll.status === "published" && (
-                      <>
-                        <Button variant="outline" size="sm" render={<Link to={`/poll/${poll.id}`} />}>
-                          View
-                        </Button>
-                        <Button variant="outline" size="sm" render={<Link to={`/polls/${poll.id}/analytics`} />}>
-                          <BarChart3 className="mr-2 h-4 w-4" />
-                          Analytics
-                        </Button>
-                      </>
-                    )}
                   </div>
-                </CardFooter>
-              </Card>
+                </div>
+                
+                <h3 className="text-lg font-bold font-heading mb-2 line-clamp-2">{poll.title}</h3>
+                
+                <p className="text-xs text-muted-foreground mb-4">
+                  Created {new Date(poll.createdAt).toLocaleDateString()}
+                </p>
+                
+                <div className="flex gap-2 mt-auto">
+                  {poll.status === "draft" && (
+                    <Button variant="outline" size="sm" className="flex-1 text-xs font-heading uppercase font-bold" render={<Link to={`/polls/${poll.id}/edit`} />}>
+                      <Edit className="mr-1 h-3 w-3" /> Edit
+                    </Button>
+                  )}
+                  {(poll.status === "published" || poll.status === "active") && (
+                    <>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="text-xs font-heading uppercase font-bold"
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${window.location.origin}/poll/${poll.id}`)
+                          toast.success("Link copied to clipboard")
+                        }}
+                      >
+                        <Copy className="mr-1 h-3 w-3" /> Copy
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        className="flex-1 text-xs font-heading uppercase font-bold"
+                        render={<Link to={`/polls/${poll.id}/analytics`} />}
+                      >
+                        <BarChart3 className="mr-1 h-3 w-3" /> Analytics
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         )}

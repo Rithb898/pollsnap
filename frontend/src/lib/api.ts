@@ -15,7 +15,7 @@ const fetcher = async (url: string) => {
     headers,
     withCredentials: true,
   })
-  return response.data
+  return response.data?.data ?? response.data
 }
 
 export const api = {
@@ -31,7 +31,7 @@ export const api = {
       headers,
       withCredentials: true,
     })
-    return response.data
+    return response.data?.data ?? response.data
   },
 
   patch: async <T>(url: string, data?: unknown): Promise<T> => {
@@ -46,7 +46,7 @@ export const api = {
       headers,
       withCredentials: true,
     })
-    return response.data
+    return response.data?.data ?? response.data
   },
 
   delete: async <T>(url: string): Promise<T> => {
@@ -61,7 +61,7 @@ export const api = {
       headers,
       withCredentials: true,
     })
-    return response.data
+    return response.data?.data ?? response.data
   },
 
   get: fetcher,
@@ -74,6 +74,11 @@ export const SWR_KEYS = {
   questions: (pollId: string) => [`/api/v1/polls/${pollId}/questions`] as const,
   options: (pollId: string, questionId: string) =>
     [`/api/v1/polls/${pollId}/questions/${questionId}/options`] as const,
+  dashboardStats: () => ["/api/v1/dashboard/stats"] as const,
+  dashboardTrends: (days: number) => ["/api/v1/dashboard/trends", days] as const,
+  dashboardRecentActivity: () => ["/api/v1/dashboard/recent-activity"] as const,
+  dashboardAudienceInsights: () => ["/api/v1/dashboard/audience-insights"] as const,
+  dashboardPlanUsage: () => ["/api/v1/dashboard/plan-usage"] as const,
 }
 
 export interface PollDTO {
@@ -192,4 +197,42 @@ export const optionsApi = {
     api.delete<{ success: boolean }>(
       `/api/v1/polls/${pollId}/questions/${questionId}/options/${optionId}`
     ),
+}
+
+export interface DashboardStatsDTO {
+  totalPolls: number
+  activePolls: number
+  totalResponses: number
+  completionRate: number
+}
+
+export interface TrendDataPoint {
+  date: string
+  responses: number
+}
+
+export interface RecentActivityDTO {
+  id: string
+  user: string
+  action: string
+  poll: string
+  time: string
+}
+
+export interface AudienceInsightsDTO {
+  mobile: number
+  desktop: number
+}
+
+export interface PlanUsageDTO {
+  responsesUsed: number
+  responsesTotal: number
+}
+
+export const dashboardApi = {
+  getStats: () => fetcher("/api/v1/dashboard/stats") as Promise<DashboardStatsDTO>,
+  getTrends: (days: number = 7) => fetcher(`/api/v1/dashboard/trends?days=${days}`) as Promise<TrendDataPoint[]>,
+  getRecentActivity: () => fetcher("/api/v1/dashboard/recent-activity") as Promise<RecentActivityDTO[]>,
+  getAudienceInsights: () => fetcher("/api/v1/dashboard/audience-insights") as Promise<AudienceInsightsDTO>,
+  getPlanUsage: () => fetcher("/api/v1/dashboard/plan-usage") as Promise<PlanUsageDTO>,
 }

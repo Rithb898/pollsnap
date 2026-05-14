@@ -3,11 +3,10 @@ import { useNavigate, Link } from "react-router"
 import { toast } from "sonner"
 import { loginSchema } from "@/types/auth"
 import { useAuthStore } from "@/store/auth-store"
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card"
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Loader2 } from "lucide-react"
+import { Loader2, ArrowRight } from "lucide-react"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -33,26 +32,53 @@ export default function Login() {
   })
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Welcome back</CardTitle>
-          <CardDescription>Sign in to your account to continue</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="flex min-h-screen">
+      {/* Visual Block */}
+      <div className="hidden lg:flex w-1/2 bg-primary p-12 flex-col justify-between animate-in fade-in slide-in-from-left-4 duration-700">
+        <div>
+          <Link to="/" className="text-2xl font-bold font-heading">
+            PollSnap.
+          </Link>
+        </div>
+        <div>
+          <h1 className="text-7xl font-heading font-black leading-[0.9] tracking-tight text-primary-foreground">
+            POLL <br />
+            FASTER <br />
+            SNAP <br />
+            HARDER.
+          </h1>
+        </div>
+        <div className="text-sm font-medium text-primary-foreground/80">
+          Sign in to your dashboard.
+        </div>
+      </div>
+
+      {/* Form Block */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 relative animate-in fade-in slide-in-from-right-4 duration-700">
+        <Link to="/" className="lg:hidden absolute top-8 left-8 text-xl font-bold font-heading">
+          PollSnap.
+        </Link>
+        
+        <div className="w-full max-w-sm space-y-10">
+          <div className="space-y-3">
+            <h2 className="text-4xl font-heading font-bold tracking-tight">Login</h2>
+            <p className="text-lg text-muted-foreground">Access your creator dashboard.</p>
+          </div>
+          
           <form
             onSubmit={(e) => {
               e.preventDefault()
               form.handleSubmit()
             }}
+            className="space-y-8"
           >
-            <FieldGroup>
+            <FieldGroup className="space-y-6">
               <form.Field name="email">
                 {(field) => (
                   <Field
                     data-invalid={field.state.meta.isTouched && !field.state.meta.isValid}
                   >
-                    <FieldLabel htmlFor="email">Email</FieldLabel>
+                    <FieldLabel htmlFor="email" className="font-heading text-sm uppercase tracking-wider font-bold">Email Address</FieldLabel>
                     <Input
                       id="email"
                       type="email"
@@ -60,6 +86,7 @@ export default function Login() {
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className="border-0 border-b-2 border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary text-xl h-12"
                     />
                     {field.state.meta.isTouched && !field.state.meta.isValid && (
                       <FieldError errors={field.state.meta.errors} />
@@ -73,7 +100,7 @@ export default function Login() {
                   <Field
                     data-invalid={field.state.meta.isTouched && !field.state.meta.isValid}
                   >
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
+                    <FieldLabel htmlFor="password" className="font-heading text-sm uppercase tracking-wider font-bold">Password</FieldLabel>
                     <Input
                       id="password"
                       type="password"
@@ -81,6 +108,7 @@ export default function Login() {
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      className="border-0 border-b-2 border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-primary text-xl h-12"
                     />
                     {field.state.meta.isTouched && !field.state.meta.isValid && (
                       <FieldError errors={field.state.meta.errors} />
@@ -89,22 +117,21 @@ export default function Login() {
                 )}
               </form.Field>
 
-              <Button type="submit" disabled={isLoading} className="w-full">
-                {isLoading && <Loader2 className="animate-spin" />}
-                Sign in
+              <Button type="submit" disabled={isLoading} size="lg" className="w-full font-heading text-lg h-14 mt-4 uppercase tracking-widest hover:-translate-y-1 transition-transform">
+                {isLoading && <Loader2 className="animate-spin mr-2" />}
+                Sign in <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </FieldGroup>
           </form>
-        </CardContent>
-        <CardFooter className="justify-center">
-          <p className="text-sm text-muted-foreground">
+
+          <p className="text-center text-muted-foreground font-medium">
             Don't have an account?{" "}
-            <Link to="/register" className="text-primary underline-offset-4 hover:underline">
-              Sign up
+            <Link to="/register" className="text-foreground border-b-2 border-foreground hover:text-primary hover:border-primary transition-colors pb-1">
+              Create one
             </Link>
           </p>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

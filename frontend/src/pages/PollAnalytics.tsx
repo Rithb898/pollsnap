@@ -10,7 +10,8 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { BarChart3, Users, Clock, TrendingUp, WifiOff } from "lucide-react"
+import { Copy, Eye, BarChart3, Users, Clock, TrendingUp, WifiOff } from "lucide-react"
+import { toast } from "sonner"
 import { useSocket } from "@/hooks/use-socket"
 import { ConnectionStatus } from "@/components/ConnectionStatus"
 
@@ -132,9 +133,20 @@ export default function PollAnalytics() {
             )}
           </Badge>
         </div>
-        <Button variant="outline" render={<Link to="/dashboard" />}>
-          Back to Dashboard
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => {
+            navigator.clipboard.writeText(`${window.location.origin}/poll/${pollId}`)
+            toast.success("Link copied to clipboard")
+          }}>
+            <Copy className="mr-2 h-4 w-4" /> Copy Link
+          </Button>
+          <Button variant="outline" render={<Link to={`/poll/${pollId}`} />}>
+            <Eye className="mr-2 h-4 w-4" /> View Poll
+          </Button>
+          <Button variant="outline" render={<Link to="/dashboard" />}>
+            Back
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
