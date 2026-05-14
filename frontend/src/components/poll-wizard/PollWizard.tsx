@@ -8,8 +8,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { AlertTriangle, Plus, Settings2, Save, Rocket } from "lucide-react"
+import { AlertTriangle, Plus, Save, Rocket, Settings2, Hash, Calendar, ShieldAlert } from "lucide-react"
 import { QuestionBlock } from "./QuestionBlock"
+import { BentoCard } from "@/components/dashboard/BentoCard"
+import { cn } from "@/lib/utils"
 
 interface PollWizardProps {
   mode: "create" | "edit"
@@ -22,7 +24,6 @@ export function PollWizard({ mode }: PollWizardProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isActivating, setIsActivating] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
   
   // Single central state for questions during edit
   const [localQuestions, setLocalQuestions] = useState<DraftQuestion[]>([])
@@ -264,134 +265,162 @@ export function PollWizard({ mode }: PollWizardProps) {
   }
 
   if (isLoading) {
-    return <div className="text-center font-heading font-black text-4xl animate-pulse py-24">LOADING CANVAS...</div>
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+        <p className="text-muted-foreground font-medium animate-pulse">Loading canvas...</p>
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-12 pb-24">
-      {/* Title & Desc */}
-      <div className="space-y-6">
-        <Input 
-          className="text-4xl md:text-5xl lg:text-6xl font-heading font-black h-auto border-0 border-b-4 border-border rounded-none px-0 py-4 focus-visible:ring-0 focus-visible:border-primary placeholder:opacity-30 bg-transparent transition-colors"
-          placeholder="POLL TITLE"
-          value={draft.basicInfo.title}
-          onChange={(e) => updateBasicInfo({ title: e.target.value })}
-        />
-        <Textarea 
-          className="text-xl md:text-2xl font-heading font-bold min-h-[100px] border-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-primary placeholder:opacity-30 bg-card p-6 shadow-[4px_4px_0px_0px_#09090b] dark:shadow-[4px_4px_0px_0px_#ffffff]"
-          placeholder="Add an optional description or context for your respondents..."
-          value={draft.basicInfo.description}
-          onChange={(e) => updateBasicInfo({ description: e.target.value })}
-        />
-      </div>
-
-      {/* Questions Canvas */}
-      <div className="space-y-8">
-        {localQuestions.map((q, i) => (
-          <QuestionBlock 
-            key={q.id}
-            question={q}
-            index={i}
-            onUpdateQuestion={handleUpdateQuestion}
-            onDeleteQuestion={handleDeleteQuestion}
-            onAddOption={handleAddOption}
-            onUpdateOption={handleUpdateOption}
-            onDeleteOption={handleDeleteOption}
-          />
-        ))}
+    <div className="relative">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         
-        <Button 
-          onClick={handleAddQuestion}
-          variant="outline"
-          className="w-full h-24 border-4 border-dashed border-border bg-transparent hover:bg-muted font-heading font-black uppercase text-2xl tracking-widest transition-all"
-        >
-          <Plus className="mr-3 h-8 w-8" />
-          Add Question
-        </Button>
-      </div>
-
-      {/* Settings Block */}
-      <div className="bg-muted/30 border-2 border-border p-6 shadow-[4px_4px_0px_0px_#09090b] dark:shadow-[4px_4px_0px_0px_#ffffff]">
-        <button 
-          onClick={() => setShowSettings(!showSettings)}
-          className="flex items-center justify-between w-full font-heading font-black text-2xl uppercase tracking-wider text-left"
-        >
-          <div className="flex items-center gap-3">
-            <Settings2 className="h-6 w-6" />
-            Advanced Settings
-          </div>
-          <span className="text-primary text-4xl">{showSettings ? "-" : "+"}</span>
-        </button>
-        
-        {showSettings && (
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 animate-in slide-in-from-top-4 duration-300">
-            <div className="flex items-start gap-4">
-              <Switch 
-                checked={draft.basicInfo.isAnonymous}
-                onCheckedChange={(c) => updateBasicInfo({ isAnonymous: c })}
-                className="mt-1"
-              />
-              <div>
-                <h4 className="font-heading font-bold text-xl uppercase">Anonymous Responses</h4>
-                <p className="text-muted-foreground font-medium mt-1">Don't collect respondent identities. Useful for sensitive feedback.</p>
+        {/* LEFT COLUMN: Settings Panel */}
+        <div className="xl:col-span-4 space-y-6 sticky top-24">
+          <BentoCard className="p-5">
+            <h2 className="text-lg font-bold font-heading uppercase tracking-widest mb-4 flex items-center gap-2">
+              <Settings2 className="h-5 w-5 text-primary" />
+              Meta Data
+            </h2>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-muted-foreground">Poll Title</label>
+                <Input 
+                  className="text-lg font-bold h-12 bg-muted/50 border-border/50 focus-visible:ring-1 focus-visible:ring-primary"
+                  placeholder="e.g. Q3 Product Feedback"
+                  value={draft.basicInfo.title}
+                  onChange={(e) => updateBasicInfo({ title: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-muted-foreground">Description (Optional)</label>
+                <Textarea 
+                  className="resize-none min-h-[80px] bg-muted/50 border-border/50 focus-visible:ring-1 focus-visible:ring-primary"
+                  placeholder="Add context for your respondents..."
+                  value={draft.basicInfo.description}
+                  onChange={(e) => updateBasicInfo({ description: e.target.value })}
+                />
               </div>
             </div>
+          </BentoCard>
 
-            <div className="space-y-3">
-              <h4 className="font-heading font-bold text-xl uppercase">Response Goal</h4>
-              <Input 
-                type="number"
-                placeholder="e.g. 100"
-                value={draft.basicInfo.responseGoal || ""}
-                onChange={(e) => updateBasicInfo({ responseGoal: e.target.value ? parseInt(e.target.value) : null })}
-                className="h-14 text-xl font-bold border-2 border-border bg-card"
-              />
-              <p className="text-muted-foreground font-medium text-sm">Automatically track progress towards a target number of responses.</p>
+          <BentoCard className="p-5 bg-gradient-to-br from-background to-muted/20 border-border/50">
+            <h2 className="text-lg font-bold font-heading uppercase tracking-widest mb-4 flex items-center gap-2">
+              <Settings2 className="h-5 w-5 text-primary" />
+              Configuration
+            </h2>
+            <div className="space-y-4">
+              <div className="flex items-start justify-between gap-4 p-3 rounded-xl bg-background border border-border/50">
+                <div className="flex items-start gap-3">
+                  <div className="mt-1 p-2 bg-primary/10 rounded-lg shrink-0">
+                    <ShieldAlert className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-sm">Anonymous Mode</h4>
+                    <p className="text-xs text-muted-foreground mt-0.5">Don't collect respondent identities.</p>
+                  </div>
+                </div>
+                <Switch 
+                  checked={draft.basicInfo.isAnonymous}
+                  onCheckedChange={(c) => updateBasicInfo({ isAnonymous: c })}
+                  className="mt-2"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted-foreground flex items-center gap-2">
+                  <Hash className="h-3 w-3" /> Response Goal (Optional)
+                </label>
+                <Input 
+                  type="number"
+                  placeholder="e.g. 100"
+                  value={draft.basicInfo.responseGoal || ""}
+                  onChange={(e) => updateBasicInfo({ responseGoal: e.target.value ? parseInt(e.target.value) : null })}
+                  className="bg-muted/50 border-border/50"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-muted-foreground flex items-center gap-2">
+                  <Calendar className="h-3 w-3" /> Expiry Date (Optional)
+                </label>
+                <Input 
+                  type="datetime-local"
+                  value={draft.basicInfo.expiresAt ? new Date(draft.basicInfo.expiresAt).toISOString().slice(0, 16) : ""}
+                  onChange={(e) => updateBasicInfo({ expiresAt: e.target.value ? new Date(e.target.value).toISOString() : null })}
+                  className="bg-muted/50 border-border/50"
+                />
+              </div>
             </div>
-            
-            <div className="space-y-3 md:col-span-2">
-              <h4 className="font-heading font-bold text-xl uppercase">Expiry Date</h4>
-              <Input 
-                type="datetime-local"
-                value={draft.basicInfo.expiresAt ? new Date(draft.basicInfo.expiresAt).toISOString().slice(0, 16) : ""}
-                onChange={(e) => updateBasicInfo({ expiresAt: e.target.value ? new Date(e.target.value).toISOString() : null })}
-                className="h-14 text-xl font-bold border-2 border-border bg-card"
-              />
-            </div>
-          </div>
-        )}
+          </BentoCard>
+        </div>
+
+        {/* RIGHT COLUMN: Canvas */}
+        <div className="xl:col-span-8 space-y-6">
+          {localQuestions.map((q, i) => (
+            <QuestionBlock 
+              key={q.id}
+              question={q}
+              index={i}
+              onUpdateQuestion={handleUpdateQuestion}
+              onDeleteQuestion={handleDeleteQuestion}
+              onAddOption={handleAddOption}
+              onUpdateOption={handleUpdateOption}
+              onDeleteOption={handleDeleteOption}
+            />
+          ))}
+          
+          <Button 
+            onClick={handleAddQuestion}
+            variant="outline"
+            className="w-full h-24 border-2 border-dashed border-border/50 bg-card/30 backdrop-blur-sm hover:bg-muted/50 hover:border-primary/50 text-muted-foreground hover:text-foreground font-bold tracking-widest transition-all rounded-2xl group"
+          >
+            <Plus className="mr-2 h-5 w-5 group-hover:scale-125 transition-transform text-primary" />
+            Add New Question
+          </Button>
+          <div className="h-24" /> {/* Spacer for floating dock */}
+        </div>
       </div>
 
-      {/* Floating Action Bar */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/90 backdrop-blur-xl border-t-4 border-border flex items-center justify-between z-50 animate-in slide-in-from-bottom-full duration-500 delay-300">
-        <div className="max-w-4xl mx-auto w-full flex items-center justify-between px-4 md:px-0">
-          <div className="flex items-center gap-4">
-            <AlertTriangle className="h-5 w-5 text-yellow-500" />
-            <span className="font-heading font-bold text-sm tracking-widest uppercase hidden md:inline-block">
-              {localQuestions.length} Questions • Draft Mode
+      {/* DYNAMIC DOCK (Floating Action Bar) */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-12 duration-700 fade-in">
+        <div className="bg-background/80 backdrop-blur-2xl border border-border/50 shadow-2xl rounded-full p-2 flex items-center gap-2">
+          
+          <div className="px-4 hidden sm:flex items-center gap-2 border-r border-border/50 pr-6 mr-2">
+            <AlertTriangle className={cn("h-4 w-4", localQuestions.length === 0 ? "text-yellow-500" : "text-primary")} />
+            <span className="text-sm font-bold text-muted-foreground whitespace-nowrap">
+              {localQuestions.length} Questions
             </span>
           </div>
-          <div className="flex items-center gap-4">
-            <Button 
-               variant="outline" 
-               size="lg" 
-               className="font-heading font-black uppercase tracking-wider h-14 px-8 border-2 border-border hidden md:flex hover:bg-muted"
-               onClick={handleSaveDraft}
-               disabled={isSaving || isActivating}
-            >
-              <Save className="mr-2 h-5 w-5" />
-              {isSaving ? "Saving..." : "Save Draft"}
-            </Button>
-            <Button 
-               size="lg" 
-               className="font-heading font-black uppercase tracking-wider h-14 px-8 border-2 border-primary hover:scale-105 transition-transform"
-               onClick={handleActivate}
-               disabled={isSaving || isActivating || localQuestions.length === 0}
-            >
-              <Rocket className="mr-2 h-5 w-5" />
-              {isActivating ? "Activating..." : "Activate Poll"}
-            </Button>
-          </div>
+
+          <Button 
+            variant="ghost" 
+            className="rounded-full font-bold px-6 hover:bg-muted"
+            onClick={handleSaveDraft}
+            disabled={isSaving || isActivating}
+          >
+            {isSaving ? (
+              <div className="h-4 w-4 rounded-full border-2 border-primary border-t-transparent animate-spin mr-2" />
+            ) : (
+              <Save className="mr-2 h-4 w-4" />
+            )}
+            Save Draft
+          </Button>
+          
+          <Button 
+            className="rounded-full font-bold px-8 shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
+            onClick={handleActivate}
+            disabled={isSaving || isActivating || localQuestions.length === 0}
+          >
+            {isActivating ? (
+              <div className="h-4 w-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin mr-2" />
+            ) : (
+              <Rocket className="mr-2 h-4 w-4" />
+            )}
+            Activate Poll
+          </Button>
         </div>
       </div>
     </div>
