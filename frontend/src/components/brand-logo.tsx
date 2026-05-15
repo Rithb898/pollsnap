@@ -18,7 +18,7 @@ export function BrandLogo({
         alt="PollSnap"
         className={`block object-contain ${imageClassName}`.trim()}
       />
-      {showText && <span className={textClassName}>PollSnap</span>}
+      {/* {showText && <span className={textClassName}>PollSnap</span>} */}
     </div>
   )
 }
