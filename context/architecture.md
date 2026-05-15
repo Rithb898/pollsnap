@@ -14,7 +14,7 @@
 | WebSockets | Socket.io + @socket.io/redis-adapter | Real-time analytics push to creator dashboard and respondents|
 | State      | Zustand                           | Client-side state — auth, poll builder, live analytics       |
 | Charts     | Recharts                          | Animated bar charts on analytics dashboard                   |
-| Deployment | Railway (server + DB + Redis), Vercel (client) | Hosting and infrastructure                    |
+| Deployment | VPS | Hosting and infrastructure                    |
 
 ## System Boundaries
 
