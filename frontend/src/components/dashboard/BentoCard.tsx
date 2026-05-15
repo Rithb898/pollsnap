@@ -6,14 +6,14 @@ const bentoCardVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-card border border-border",
-        primary: "bg-primary text-primary-foreground",
-        secondary: "bg-secondary text-secondary-foreground",
-        dark: "bg-zinc-950 text-zinc-50 border border-zinc-800 dark:bg-zinc-900 dark:border-zinc-800",
-        gradient: "bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20",
-        warning: "bg-amber-100/50 text-amber-900 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-200 dark:border-amber-900/50",
-        accent: "bg-indigo-100/50 text-indigo-900 border border-indigo-200 dark:bg-indigo-900/20 dark:text-indigo-200 dark:border-indigo-900/50",
-        success: "bg-emerald-100/50 text-emerald-900 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-200 dark:border-emerald-900/50",
+        default: "bg-card/40 backdrop-blur-2xl border border-white/20 dark:border-white/5 shadow-2xl",
+        primary: "bg-primary/80 backdrop-blur-2xl text-primary-foreground border border-white/20 shadow-2xl shadow-primary/20",
+        secondary: "bg-secondary/80 backdrop-blur-2xl text-secondary-foreground border border-white/20 shadow-2xl",
+        dark: "bg-zinc-950/50 backdrop-blur-2xl text-zinc-50 border border-white/10 dark:bg-zinc-900/50 shadow-2xl",
+        gradient: "bg-gradient-to-br from-primary/15 to-primary/5 backdrop-blur-2xl border border-white/20 dark:border-white/5 shadow-2xl",
+        warning: "bg-amber-100/40 backdrop-blur-2xl text-amber-900 border border-white/20 dark:bg-amber-900/20 dark:text-amber-200 dark:border-white/5 shadow-2xl",
+        accent: "bg-indigo-100/40 backdrop-blur-2xl text-indigo-900 border border-white/20 dark:bg-indigo-900/20 dark:text-indigo-200 dark:border-white/5 shadow-2xl",
+        success: "bg-emerald-100/40 backdrop-blur-2xl text-emerald-900 border border-white/20 dark:bg-emerald-900/20 dark:text-emerald-200 dark:border-white/5 shadow-2xl",
       },
     },
     defaultVariants: {

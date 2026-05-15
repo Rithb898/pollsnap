@@ -13,6 +13,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import ForgotPassword from './pages/ForgotPassword'
 import Dashboard from './pages/Dashboard'
 import PublicPoll from './pages/PublicPoll'
 
@@ -36,6 +37,7 @@ createRoot(document.getElementById('root')!).render(
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
           </Route>
 
           <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
