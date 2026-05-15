@@ -27,7 +27,7 @@ export function QuestionBlock({
 }: QuestionBlockProps) {
   const optionsEndRef = useRef<HTMLDivElement>(null)
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, optionIndex: number) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, _optionIndex: number) => {
     if (e.key === "Enter") {
       e.preventDefault()
       onAddOption(question.id, "")

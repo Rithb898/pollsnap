@@ -10,7 +10,7 @@ import {
   LogOut,
   ListTodo,
   PieChart,
-  Library,
+
   MoreVertical,
   Sparkles
 } from "lucide-react"
