@@ -24,6 +24,12 @@ export const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().min(1, "GOOGLE_CLIENT_ID is required"),
   GOOGLE_CLIENT_SECRET: z.string().min(1, "GOOGLE_CLIENT_SECRET is required"),
 
+  // Email
+  RESEND_API_KEY: z.string().min(1, "RESEND_API_KEY is required"),
+  RESEND_FROM_EMAIL: z
+    .string()
+    .min(1, "RESEND_FROM_EMAIL is required"),
+
   // Redis for Socket.io
   REDIS_URL: z.string().url().optional()
 });

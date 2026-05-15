@@ -11,6 +11,7 @@
     "http"
   ],
   "tags": [
+    { "name": "Auth", "description": "Authentication endpoints" },
     { "name": "Health", "description": "Health check endpoints" },
     { "name": "Users", "description": "User management endpoints" },
     { "name": "Polls", "description": "Poll management endpoints" },
@@ -21,6 +22,71 @@
     { "name": "Dashboard", "description": "Dashboard endpoints" }
   ],
   "paths": {
+    "/auth/request-password-reset": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Request a password reset email. The reset link redirects to the frontend reset page.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["email"],
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "format": "email",
+                  "example": "john@example.com"
+                },
+                "redirectTo": {
+                  "type": "string",
+                  "example": "http://localhost:5173/reset-password"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": ["Auth"],
+        "description": "Set a new password from a valid reset token.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["newPassword", "token"],
+              "properties": {
+                "newPassword": {
+                  "type": "string",
+                  "example": "password1234"
+                },
+                "token": {
+                  "type": "string",
+                  "example": "VALID_TOKEN_FROM_URL"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/health/": {
       "get": {
         "tags": ["Health"],

@@ -43,7 +43,7 @@ setupSwagger(app);
 
 //? Routes
 app.get("/", (req: Request, res: Response) => {
-  res.redirect("/api/v1/health");
+  res.redirect("/api/health");
 });
 
 app.use("/api", Routes);
