@@ -14,7 +14,6 @@ import { TemplatesCard } from "@/components/dashboard/TemplatesCard"
 import { CompletionRate } from "@/components/dashboard/CompletionRate"
 import { RecentActivityCard } from "@/components/dashboard/RecentActivityCard"
 import { AudienceInsightsCard } from "@/components/dashboard/AudienceInsightsCard"
-import { PlanUsageCard } from "@/components/dashboard/PlanUsageCard"
 import { ProTipCard } from "@/components/dashboard/ProTipCard"
 
 export default function Dashboard() {
@@ -97,8 +96,7 @@ export default function Dashboard() {
         <TemplatesCard className="col-span-2 md:col-span-2 lg:col-span-3" />
 
         {/* Row 6 */}
-        <AudienceInsightsCard className="col-span-2 md:col-span-4 lg:col-span-4" />
-        <PlanUsageCard className="col-span-2 md:col-span-2 lg:col-span-2" />
+        <AudienceInsightsCard className="col-span-2 md:col-span-6 lg:col-span-6" />
 
         {/* Row 7 */}
         <ProTipCard className="col-span-2 md:col-span-6 lg:col-span-6" />

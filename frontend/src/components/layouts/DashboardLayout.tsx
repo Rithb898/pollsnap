@@ -12,7 +12,6 @@ import {
   PieChart,
 
   MoreVertical,
-  Sparkles
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -102,20 +101,6 @@ export default function DashboardLayout() {
               )
             })}
           </nav>
-
-          {/* Pro Upgrade Banner */}
-          <div className="px-4 mb-4">
-            <div className="bg-linear-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-4 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                <Sparkles className="h-12 w-12 text-indigo-500" />
-              </div>
-              <h4 className="text-xs font-bold font-heading uppercase tracking-widest text-indigo-600 dark:text-indigo-400 mb-1">Upgrade to Pro</h4>
-              <p className="text-xs text-muted-foreground mb-3 leading-relaxed">Get unlimited polls and advanced analytics.</p>
-              <Button size="sm" variant="outline" className="w-full h-8 text-xs font-bold rounded-lg border-indigo-500/30 text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-700 dark:hover:text-indigo-300">
-                View Plans
-              </Button>
-            </div>
-          </div>
 
           {/* User Profile */}
           <div className="p-4 border-t border-border/50 relative" ref={profileRef}>
