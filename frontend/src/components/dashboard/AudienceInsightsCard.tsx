@@ -1,5 +1,5 @@
 import { BentoCard } from "./BentoCard"
-import { Users, Smartphone, Monitor, BarChart } from "lucide-react"
+import { Users, Smartphone, Monitor, Tablet, BarChart } from "lucide-react"
 import { motion } from "motion/react"
 import useSWR from "swr"
 import { SWR_KEYS, dashboardApi } from "@/lib/api"
@@ -14,7 +14,8 @@ export function AudienceInsightsCard({ className }: { className?: string }) {
 
   const mobile = data?.mobile || 0
   const desktop = data?.desktop || 0
-  const isEmpty = !isLoading && mobile === 0 && desktop === 0
+  const tablet = data?.tablet || 0
+  const isEmpty = !isLoading && mobile === 0 && desktop === 0 && tablet === 0
 
   return (
     <BentoCard variant="default" className={className}>
@@ -40,33 +41,47 @@ export function AudienceInsightsCard({ className }: { className?: string }) {
             <p className="text-xs font-medium">Not enough data</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 mt-auto">
+          <div className="grid grid-cols-3 gap-3 mt-auto">
             <motion.div 
-              className="bg-muted/30 border border-border/50 rounded-xl p-4 flex flex-col gap-3"
+              className="bg-muted/30 border border-border/50 rounded-xl p-3 flex flex-col gap-2"
               whileHover={{ scale: 1.02 }}
             >
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2 text-indigo-500 dark:text-indigo-400">
-                  <Smartphone className="h-5 w-5" />
-                  <span className="text-[10px] font-heading uppercase tracking-widest font-bold">Mobile</span>
+                <div className="flex items-center gap-1 text-indigo-500 dark:text-indigo-400">
+                  <Smartphone className="h-4 w-4" />
+                  <span className="text-[9px] font-heading uppercase tracking-widest font-bold">Mobile</span>
                 </div>
-                <span className="text-xl font-black font-heading">{mobile}%</span>
               </div>
-              <Progress value={mobile} className="h-1.5 bg-indigo-100 dark:bg-indigo-950 [&>div]:bg-indigo-500" />
+              <span className="text-xl font-black font-heading">{mobile}%</span>
+              <Progress value={mobile} className="h-1 bg-indigo-100 dark:bg-indigo-950 [&>div]:bg-indigo-500" />
             </motion.div>
             
             <motion.div 
-              className="bg-muted/30 border border-border/50 rounded-xl p-4 flex flex-col gap-3"
+              className="bg-muted/30 border border-border/50 rounded-xl p-3 flex flex-col gap-2"
               whileHover={{ scale: 1.02 }}
             >
               <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2 text-sky-500 dark:text-sky-400">
-                  <Monitor className="h-5 w-5" />
-                  <span className="text-[10px] font-heading uppercase tracking-widest font-bold">Desktop</span>
+                <div className="flex items-center gap-1 text-sky-500 dark:text-sky-400">
+                  <Monitor className="h-4 w-4" />
+                  <span className="text-[9px] font-heading uppercase tracking-widest font-bold">Desktop</span>
                 </div>
-                <span className="text-xl font-black font-heading">{desktop}%</span>
               </div>
-              <Progress value={desktop} className="h-1.5 bg-sky-100 dark:bg-sky-950 [&>div]:bg-sky-500" />
+              <span className="text-xl font-black font-heading">{desktop}%</span>
+              <Progress value={desktop} className="h-1 bg-sky-100 dark:bg-sky-950 [&>div]:bg-sky-500" />
+            </motion.div>
+            
+            <motion.div 
+              className="bg-muted/30 border border-border/50 rounded-xl p-3 flex flex-col gap-2"
+              whileHover={{ scale: 1.02 }}
+            >
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-1 text-amber-500 dark:text-amber-400">
+                  <Tablet className="h-4 w-4" />
+                  <span className="text-[9px] font-heading uppercase tracking-widest font-bold">Tablet</span>
+                </div>
+              </div>
+              <span className="text-xl font-black font-heading">{tablet}%</span>
+              <Progress value={tablet} className="h-1 bg-amber-100 dark:bg-amber-950 [&>div]:bg-amber-500" />
             </motion.div>
           </div>
         )}

@@ -169,9 +169,46 @@ router.get(
   "/audience-insights",
   requireAuth,
   AsyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest
+    const userId = authReq.user?.id
+
+    const userPolls = await db
+      .select({ id: poll.id })
+      .from(poll)
+      .where(and(eq(poll.creatorId, userId!), isNull(poll.deletedAt)))
+
+    const pollIds = userPolls.map(p => p.id)
+
+    if (pollIds.length === 0) {
+      return ApiResponse.ok(res, "Audience insights fetched successfully", {
+        mobile: 0,
+        desktop: 0,
+        tablet: 0
+      })
+    }
+
+    const deviceCounts = await db
+      .select({
+        deviceType: response.deviceType,
+        count: sql<number>`count(*)::int`
+      })
+      .from(response)
+      .where(sql`${response.pollId} IN ${pollIds}`)
+      .groupBy(response.deviceType)
+
+    const total = deviceCounts.reduce((sum, d) => sum + (d.count || 0), 0)
+    
+    type DeviceType = 'mobile' | 'desktop' | 'tablet' | null
+    const getPercentage = (device: DeviceType) => {
+      if (total === 0) return 0
+      const found = deviceCounts.find(d => d.deviceType === device)
+      return found ? Math.round((found.count / total) * 100) : 0
+    }
+
     return ApiResponse.ok(res, "Audience insights fetched successfully", {
-      mobile: 68,
-      desktop: 32
+      mobile: getPercentage('mobile'),
+      desktop: getPercentage('desktop'),
+      tablet: getPercentage('tablet')
     })
   })
 )

@@ -29,6 +29,27 @@
       "when": 1778790595347,
       "tag": "0003_fine_pixie",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1778834485352,
+      "tag": "0004_rapid_sersi",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1778834608271,
+      "tag": "0005_sloppy_mephisto",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1778839866595,
+      "tag": "0006_glossy_wither",
+      "breakpoints": true
     }
   ]
 }

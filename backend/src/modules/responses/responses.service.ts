@@ -9,7 +9,11 @@ export const submitResponse = async (
   pollId: string,
   userId: string | null,
   sessionToken: string | null,
-  data: SubmitResponseInput
+  data: SubmitResponseInput,
+  userAgent?: string,
+  deviceType?: 'mobile' | 'desktop' | 'tablet',
+  ipAddress?: string,
+  countryCode?: string
 ) => {
   const [existingPoll] = await db
     .select()
@@ -126,7 +130,11 @@ export const submitResponse = async (
     .values({
       pollId,
       respondentId: existingPoll.isAnonymous ? null : userId,
-      sessionToken: existingPoll.isAnonymous ? sessionToken : null
+      sessionToken: existingPoll.isAnonymous ? sessionToken : null,
+      userAgent,
+      deviceType,
+      ipAddress,
+      countryCode
     })
     .returning();
 

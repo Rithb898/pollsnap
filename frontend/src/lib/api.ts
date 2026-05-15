@@ -81,6 +81,14 @@ export const SWR_KEYS = {
   dashboardPlanUsage: () => ["/api/v1/dashboard/plan-usage"] as const,
   pollAnalytics: (pollId: string) => [`/api/v1/polls/${pollId}/analytics`] as const,
   publicResults: (pollId: string) => [`/api/v1/polls/${pollId}/results`] as const,
+  globalAnalyticsTrends: (days: number) => [`/api/v1/analytics/trends`, days] as const,
+  globalAnalyticsDevice: () => ["/api/v1/analytics/device"] as const,
+  globalAnalyticsBrowser: () => ["/api/v1/analytics/browser"] as const,
+  globalAnalyticsOs: () => ["/api/v1/analytics/os"] as const,
+  globalAnalyticsLeaderboard: () => ["/api/v1/analytics/leaderboard"] as const,
+  globalAnalyticsHeatmap: () => ["/api/v1/analytics/heatmap"] as const,
+  globalAnalyticsGeographic: () => ["/api/v1/analytics/geographic"] as const,
+  globalAnalyticsAudience: () => ["/api/v1/analytics/audience"] as const,
 }
 
 export interface PollDTO {
@@ -233,6 +241,7 @@ export interface RecentActivityDTO {
 export interface AudienceInsightsDTO {
   mobile: number
   desktop: number
+  tablet: number
 }
 
 export interface PlanUsageDTO {
@@ -281,4 +290,65 @@ export const analyticsApi = {
     fetcher(`/api/v1/polls/${pollId}/analytics`) as Promise<PollAnalyticsDTO>,
   getPublicResults: (pollId: string) =>
     fetcher(`/api/v1/polls/${pollId}/results`) as Promise<PollAnalyticsDTO>,
+}
+
+export interface GlobalTrendsDataPoint {
+  date: string
+  responses: number
+  completionRate: number
+}
+
+export interface DeviceBreakdownDTO {
+  mobile: number
+  desktop: number
+  tablet: number
+}
+
+export interface BrowserOsDataPoint {
+  name: string
+  value: number
+}
+
+export interface LeaderboardEntryDTO {
+  id: string
+  title: string
+  responses: number
+  rate: number
+  trend: string
+}
+
+export interface HeatmapDataDTO {
+  day: string
+  hours: number[]
+}
+
+export interface CountryDataDTO {
+  country: string
+  code: string
+  users: number
+  percentage: number
+}
+
+export const globalAnalyticsApi = {
+  getTrends: (days: number = 30) =>
+    fetcher(`/api/v1/analytics/trends?days=${days}`) as Promise<GlobalTrendsDataPoint[]>,
+  getDeviceBreakdown: () =>
+    fetcher("/api/v1/analytics/device") as Promise<DeviceBreakdownDTO>,
+  getBrowserBreakdown: () =>
+    fetcher("/api/v1/analytics/browser") as Promise<BrowserOsDataPoint[]>,
+  getOsBreakdown: () =>
+    fetcher("/api/v1/analytics/os") as Promise<BrowserOsDataPoint[]>,
+  getLeaderboard: () =>
+    fetcher("/api/v1/analytics/leaderboard") as Promise<LeaderboardEntryDTO[]>,
+  getHeatmap: () =>
+    fetcher("/api/v1/analytics/heatmap") as Promise<HeatmapDataDTO[]>,
+  getGeographicDistribution: () =>
+    fetcher("/api/v1/analytics/geographic") as Promise<CountryDataDTO[]>,
+  getAudienceData: () =>
+    fetcher("/api/v1/analytics/audience") as Promise<{
+      device: DeviceBreakdownDTO
+      browser: BrowserOsDataPoint[]
+      os: BrowserOsDataPoint[]
+      geographic: CountryDataDTO[]
+    }>,
 }

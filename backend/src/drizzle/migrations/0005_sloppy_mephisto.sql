@@ -1,0 +1,2 @@
+CREATE TYPE "public"."device_type" AS ENUM('mobile', 'desktop', 'tablet');--> statement-breakpoint
+ALTER TABLE "response" ALTER COLUMN "device_type" SET DATA TYPE "public"."device_type" USING "device_type"::"public"."device_type";

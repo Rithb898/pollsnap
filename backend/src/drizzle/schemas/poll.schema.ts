@@ -18,6 +18,12 @@ export const pollStatusEnum = pgEnum("poll_status", [
   "closed"
 ]);
 
+export const deviceTypeEnum = pgEnum("device_type", [
+  "mobile",
+  "desktop",
+  "tablet"
+]);
+
 export const poll = pgTable(
   "poll",
   {
@@ -82,10 +88,15 @@ export const response = pgTable(
       onDelete: "set null"
     }),
     sessionToken: text("session_token"),
-    submittedAt: timestamp("submitted_at").defaultNow().notNull()
+    submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+    userAgent: text("user_agent"),
+    deviceType: deviceTypeEnum("device_type"),
+    ipAddress: text("ip_address"),
+    countryCode: text("country_code")
   },
   table => [
     index("response_poll_id_idx").on(table.pollId),
+    index("response_country_idx").on(table.countryCode),
     unique("response_poll_respondent_unique")
       .on(table.pollId, table.respondentId),
     unique("response_poll_session_unique")
