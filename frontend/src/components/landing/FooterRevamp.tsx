@@ -1,5 +1,6 @@
 import { Link } from "react-router"
-import { BarChart3, MessageCircle, Share2, ArrowUpRight } from "lucide-react"
+import { BrandLogo } from "@/components/brand-logo"
+import { MessageCircle, Share2, ArrowUpRight } from "lucide-react"
 
 export function FooterRevamp() {
   return (
@@ -9,10 +10,10 @@ export function FooterRevamp() {
           
           <div className="lg:col-span-5 space-y-8">
             <Link to="/" className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-2xl bg-primary flex items-center justify-center text-white">
-                <BarChart3 className="h-6 w-6" />
-              </div>
-              <span className="text-3xl font-black tracking-tighter uppercase">PollSnap</span>
+              <BrandLogo
+                imageClassName="h-10 w-auto"
+                textClassName="text-3xl font-black tracking-tighter uppercase"
+              />
             </Link>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-sm">
               We're rethinking opinion capture for the modern web. From creators to enterprise, we scale your voice.

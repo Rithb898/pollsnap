@@ -1,5 +1,6 @@
 import { Link } from "react-router"
-import { BarChart3, MessageCircle, Share2 } from "lucide-react"
+import { BrandLogo } from "@/components/brand-logo"
+import { MessageCircle, Share2 } from "lucide-react"
 
 export function FooterSection() {
   return (
@@ -8,8 +9,10 @@ export function FooterSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="space-y-6">
             <Link to="/" className="flex items-center gap-2">
-              <BarChart3 className="h-6 w-6 text-primary" />
-              <span className="text-xl font-bold">PollSnap</span>
+              <BrandLogo
+                imageClassName="h-8 w-auto"
+                textClassName="text-xl font-bold"
+              />
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">
               PollSnap is a platform for building AI-powered applications. We provide the fastest way to capture opinions and create virality.

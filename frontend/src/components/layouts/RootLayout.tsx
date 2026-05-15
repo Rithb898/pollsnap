@@ -1,6 +1,7 @@
 import { Link, Outlet } from "react-router"
 import { useAuthStore } from "@/store/auth-store"
 import { Button } from "@/components/ui/button"
+import { BrandLogo } from "@/components/brand-logo"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { BarChart3, LogOut, User } from "lucide-react"
+import { LogOut, User } from "lucide-react"
 
 export default function RootLayout() {
   const { user, isAuthenticated, logout } = useAuthStore()
@@ -19,10 +20,10 @@ export default function RootLayout() {
       <header className="fixed top-8 z-50 w-full px-6 pointer-events-none">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between rounded-[32px] border border-white/20 bg-white/5 px-10 backdrop-blur-3xl shadow-[0_32px_64px_rgba(0,0,0,0.15)] pointer-events-auto transition-all hover:bg-white/10 dark:border-white/5 dark:bg-zinc-900/40">
           <Link to="/" className="flex items-center gap-3 transition-all hover:scale-[1.02] group">
-            <div className="h-10 w-10 rounded-2xl bg-primary flex items-center justify-center text-white shadow-xl shadow-primary/30 group-hover:rotate-12 transition-transform">
-              <BarChart3 className="h-6 w-6" />
-            </div>
-            <span className="text-2xl font-black tracking-tighter uppercase font-heading">PollSnap</span>
+            <BrandLogo
+              imageClassName="h-10 w-auto"
+              textClassName="text-2xl font-black tracking-tighter uppercase font-heading"
+            />
           </Link>
 
           <nav className="hidden md:flex items-center gap-12">

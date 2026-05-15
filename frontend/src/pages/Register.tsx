@@ -3,10 +3,11 @@ import { useNavigate, Link } from "react-router"
 import { toast } from "sonner"
 import { registerSchema } from "@/types/auth"
 import { useAuthStore } from "@/store/auth-store"
+import { BrandLogo } from "@/components/brand-logo"
 import { Field, FieldLabel, FieldError, FieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Loader2, ArrowRight, BarChart3 } from "lucide-react"
+import { Loader2, ArrowRight } from "lucide-react"
 import { useState } from "react"
 import { motion } from "motion/react"
 
@@ -51,8 +52,8 @@ export default function Register() {
         className="w-full max-w-md relative z-10"
       >
         <div className="flex flex-col items-center mb-10 space-y-4">
-          <Link to="/" className="h-14 w-14 rounded-2xl bg-primary flex items-center justify-center text-white shadow-2xl shadow-primary/40 hover:-rotate-6 transition-transform">
-            <BarChart3 className="h-7 w-7" />
+          <Link to="/" className="hover:scale-[1.02] transition-transform">
+            <BrandLogo imageClassName="h-14 w-auto" showText={false} />
           </Link>
           <div className="text-center">
             <h1 className="text-3xl font-black tracking-tighter font-heading">Create Identity</h1>

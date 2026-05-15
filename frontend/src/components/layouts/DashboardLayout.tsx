@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react"
 import { Link, Outlet, useLocation, useNavigate } from "react-router"
 import { useAuthStore } from "@/store/auth-store"
 import { Button } from "@/components/ui/button"
+import { BrandLogo } from "@/components/brand-logo"
 import { 
-  BarChart3, 
   Plus, 
   LayoutDashboard, 
   Settings, 
@@ -52,10 +52,10 @@ export default function DashboardLayout() {
           {/* Logo */}
           <div className="flex shrink-0 h-16 items-center px-6 mb-2 mt-2">
             <Link to="/" className="flex items-center gap-2 group">
-              <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-colors">
-                <BarChart3 className="h-6 w-6 text-primary" />
-              </div>
-              <span className="font-heading font-black text-xl tracking-tight">PollSnap</span>
+              <BrandLogo
+                imageClassName="h-8 w-auto"
+                textClassName="font-heading font-black text-xl tracking-tight"
+              />
             </Link>
           </div>
 
@@ -165,8 +165,10 @@ export default function DashboardLayout() {
       <div className="flex flex-1 flex-col overflow-hidden">
         <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border/50 bg-background/80 backdrop-blur-md px-4 lg:hidden">
           <Link to="/" className="flex items-center gap-2">
-            <BarChart3 className="h-6 w-6 text-primary" />
-            <span className="font-heading font-black text-lg tracking-tight">PollSnap</span>
+            <BrandLogo
+              imageClassName="h-7 w-auto"
+              textClassName="font-heading font-black text-lg tracking-tight"
+            />
           </Link>
         </header>
 
