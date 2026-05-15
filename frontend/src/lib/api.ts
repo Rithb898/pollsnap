@@ -270,6 +270,16 @@ export interface QuestionAnalyticsDTO {
   }[]
 }
 
+export interface RecentVoteDTO {
+  id: string
+  time: string
+  respondent: {
+    id: string
+    displayName: string
+    email: string
+  } | null
+}
+
 export interface PollAnalyticsDTO {
   poll: {
     id: string
@@ -282,7 +292,20 @@ export interface PollAnalyticsDTO {
   goalProgress: number | null
   completionRate: number
   questions: QuestionAnalyticsDTO[]
-  recentVotes: { id: string; time: string }[]
+  recentVotes: RecentVoteDTO[]
+  audience: {
+    geographic: {
+      country: string
+      code: string
+      count: number
+      percentage: number
+    }[]
+    devices: {
+      type: string
+      count: number
+      percentage: number
+    }[]
+  }
 }
 
 export const analyticsApi = {

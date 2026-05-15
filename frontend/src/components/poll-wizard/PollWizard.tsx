@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { useNavigate, useParams } from "react-router"
 import { toast } from "sonner"
+import { z } from "zod"
 import { usePollDraft, type DraftQuestion } from "@/hooks/use-poll-draft"
 import { pollsApi, questionsApi, optionsApi, type PollDTO, type QuestionDTO, type OptionDTO, SWR_KEYS } from "@/lib/api"
 import { mutate } from "swr"
@@ -11,19 +12,49 @@ import { Switch } from "@/components/ui/switch"
 import { AlertTriangle, Plus, Save, Rocket, Settings2, Hash, Calendar, ShieldAlert } from "lucide-react"
 import { QuestionBlock } from "./QuestionBlock"
 import { BentoCard } from "@/components/dashboard/BentoCard"
+import { FieldError } from "@/components/ui/field"
 import { cn } from "@/lib/utils"
 
 interface PollWizardProps {
   mode: "create" | "edit"
 }
 
+const pollBasicInfoSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(1, "Title is required")
+    .max(255, "Title must be 255 characters or less"),
+  description: z.string().max(1000, "Description must be 1000 characters or less"),
+  isAnonymous: z.boolean(),
+  expiresAt: z
+    .string()
+    .datetime({ message: "Expiry date must be a valid ISO 8601 datetime" })
+    .nullable(),
+  responseGoal: z.number().int().positive("Response goal must be positive").nullable(),
+})
+
+const activateBasicInfoSchema = pollBasicInfoSchema.superRefine((data, ctx) => {
+  if (!data.expiresAt) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["expiresAt"],
+      message: "Expiry date is required to activate this poll",
+    })
+  }
+})
+
+type BasicInfoErrors = Partial<Record<"title" | "expiresAt" | "responseGoal", string>>
+
 export function PollWizard({ mode }: PollWizardProps) {
-  const { id: pollId } = useParams()
+  const { pollId: routePollId, id: legacyPollId } = useParams()
+  const pollId = routePollId || legacyPollId
   const navigate = useNavigate()
   
   const [isLoading, setIsLoading] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isActivating, setIsActivating] = useState(false)
+  const [basicInfoErrors, setBasicInfoErrors] = useState<BasicInfoErrors>({})
   
   // Single central state for questions during edit
   const [localQuestions, setLocalQuestions] = useState<DraftQuestion[]>([])
@@ -35,6 +66,63 @@ export function PollWizard({ mode }: PollWizardProps) {
     setPollId,
     clearStorage,
   } = usePollDraft(pollId)
+
+  const clearBasicInfoError = (field: keyof BasicInfoErrors) => {
+    setBasicInfoErrors(prev => {
+      if (!prev[field]) return prev
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
+  const getErrorMessage = (error: unknown, fallback: string) => {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error
+    ) {
+      const candidate = (error as {
+        response?: { data?: { message?: unknown } }
+      }).response?.data?.message
+      if (typeof candidate === "string") {
+        return candidate
+      }
+    }
+
+    if (error instanceof Error && error.message) {
+      return error.message
+    }
+
+    return fallback
+  }
+
+  const validateBasicInfo = (mode: "draft" | "activate") => {
+    const schema = mode === "activate" ? activateBasicInfoSchema : pollBasicInfoSchema
+    const result = schema.safeParse({
+      title: draft.basicInfo.title,
+      description: draft.basicInfo.description || "",
+      isAnonymous: draft.basicInfo.isAnonymous,
+      expiresAt: draft.basicInfo.expiresAt,
+      responseGoal: draft.basicInfo.responseGoal,
+    })
+
+    if (result.success) {
+      setBasicInfoErrors({})
+      return true
+    }
+
+    const nextErrors: BasicInfoErrors = {}
+    for (const issue of result.error.issues) {
+      const field = issue.path[0]
+      if (field === "title" || field === "expiresAt" || field === "responseGoal") {
+        nextErrors[field] = issue.message
+      }
+    }
+
+    setBasicInfoErrors(nextErrors)
+    return false
+  }
 
   // Initialization & Data Loading
   useEffect(() => {
@@ -79,22 +167,26 @@ export function PollWizard({ mode }: PollWizardProps) {
       load()
     } else if (mode === "create") {
       // In create mode, if we have draft questions, use them. Otherwise, initialize one empty question out of the gate.
-      if (draft.questions && draft.questions.length > 0) {
-        setLocalQuestions(draft.questions)
-      } else {
-        setLocalQuestions([{
-          id: `temp_${Date.now()}`,
-          text: "",
-          isMandatory: true,
-          options: [
-            { id: `temp_opt1_${Date.now()}`, text: "" },
-            { id: `temp_opt2_${Date.now()}`, text: "" }
-          ]
-        }])
-      }
+      const nextQuestions = draft.questions && draft.questions.length > 0
+        ? draft.questions
+        : [{
+            id: `temp_${Date.now()}`,
+            text: "",
+            isMandatory: true,
+            options: [
+              { id: `temp_opt1_${Date.now()}`, text: "" },
+              { id: `temp_opt2_${Date.now()}`, text: "" }
+            ]
+          }]
+
+      const syncTimer = window.setTimeout(() => {
+        setLocalQuestions(nextQuestions)
+      }, 0)
+
+      return () => window.clearTimeout(syncTimer)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, pollId])
+  }, [mode, pollId, draft.questions])
 
   // Question Mutators
   const handleAddQuestion = () => {
@@ -140,8 +232,8 @@ export function PollWizard({ mode }: PollWizardProps) {
 
   // Save Logic
   const performSave = async (): Promise<string | null> => {
-    if (!draft.basicInfo.title.trim()) {
-      toast.error("Title is required")
+    if (!validateBasicInfo("draft")) {
+      toast.error("Fix the highlighted fields")
       return null
     }
 
@@ -174,6 +266,14 @@ export function PollWizard({ mode }: PollWizardProps) {
       for (const question of localQuestions) {
         const hasText = question.text.trim().length > 0;
         const validOptions = question.options.filter(o => o.text.trim().length > 0);
+        const normalizedOptionTexts = validOptions.map(o => o.text.trim().toLowerCase())
+        const duplicateOption = normalizedOptionTexts.find(
+          (text, index) => normalizedOptionTexts.indexOf(text) !== index
+        )
+
+        if (duplicateOption) {
+          throw new Error("Option text must be unique within a question")
+        }
         
         // Skip entirely empty questions
         if (!hasText && validOptions.length === 0) continue;
@@ -229,8 +329,8 @@ export function PollWizard({ mode }: PollWizardProps) {
 
       await mutate(SWR_KEYS.polls())
       return currentPollId
-    } catch {
-      toast.error("Failed to save draft")
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to save draft"))
       return null
     } finally {
       setIsSaving(false)
@@ -242,12 +342,17 @@ export function PollWizard({ mode }: PollWizardProps) {
     if (id) {
       toast.success("Draft saved")
       if (mode === "create") {
-         navigate(`/poll/${id}/edit`)
+         navigate(`/polls/${id}/edit`)
       }
     }
   }
 
   const handleActivate = async () => {
+    if (!validateBasicInfo("activate")) {
+      toast.error("Fix the highlighted fields")
+      return
+    }
+
     setIsActivating(true)
     const id = await performSave()
     if (id) {
@@ -257,8 +362,15 @@ export function PollWizard({ mode }: PollWizardProps) {
         toast.success("Poll activated and ready for responses!")
         clearStorage()
         navigate(`/poll/${id}`)
-      } catch {
-        toast.error("Failed to activate poll")
+      } catch (error: unknown) {
+        const message = getErrorMessage(error, "Failed to activate poll")
+        if (message.toLowerCase().includes("expiry date")) {
+          setBasicInfoErrors(prev => ({
+            ...prev,
+            expiresAt: message,
+          }))
+        }
+        toast.error(message)
       }
     }
     setIsActivating(false)
@@ -291,8 +403,12 @@ export function PollWizard({ mode }: PollWizardProps) {
                   className="text-lg font-bold h-12 bg-muted/50 border-border/50 focus-visible:ring-1 focus-visible:ring-primary"
                   placeholder="e.g. Q3 Product Feedback"
                   value={draft.basicInfo.title}
-                  onChange={(e) => updateBasicInfo({ title: e.target.value })}
+                  onChange={(e) => {
+                    updateBasicInfo({ title: e.target.value })
+                    clearBasicInfoError("title")
+                  }}
                 />
+                <FieldError>{basicInfoErrors.title}</FieldError>
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-bold text-muted-foreground">Description (Optional)</label>
@@ -337,21 +453,32 @@ export function PollWizard({ mode }: PollWizardProps) {
                   type="number"
                   placeholder="e.g. 100"
                   value={draft.basicInfo.responseGoal || ""}
-                  onChange={(e) => updateBasicInfo({ responseGoal: e.target.value ? parseInt(e.target.value) : null })}
+                  onChange={(e) => {
+                    updateBasicInfo({ responseGoal: e.target.value ? parseInt(e.target.value) : null })
+                    clearBasicInfoError("responseGoal")
+                  }}
                   className="bg-muted/50 border-border/50"
                 />
+                <FieldError>{basicInfoErrors.responseGoal}</FieldError>
               </div>
               
               <div className="space-y-2">
                 <label className="text-xs font-bold text-muted-foreground flex items-center gap-2">
-                  <Calendar className="h-3 w-3" /> Expiry Date (Optional)
+                  <Calendar className="h-3 w-3" /> Expiry Date
                 </label>
                 <Input 
                   type="datetime-local"
                   value={draft.basicInfo.expiresAt ? new Date(draft.basicInfo.expiresAt).toISOString().slice(0, 16) : ""}
-                  onChange={(e) => updateBasicInfo({ expiresAt: e.target.value ? new Date(e.target.value).toISOString() : null })}
-                  className="bg-muted/50 border-border/50"
+                  onChange={(e) => {
+                    updateBasicInfo({ expiresAt: e.target.value ? new Date(e.target.value).toISOString() : null })
+                    clearBasicInfoError("expiresAt")
+                  }}
+                  className={cn(
+                    "bg-muted/50 border-border/50",
+                    basicInfoErrors.expiresAt && "border-destructive focus-visible:ring-destructive"
+                  )}
                 />
+                <FieldError>{basicInfoErrors.expiresAt}</FieldError>
               </div>
             </div>
           </BentoCard>
@@ -412,7 +539,7 @@ export function PollWizard({ mode }: PollWizardProps) {
           <Button 
             className="rounded-full font-bold px-8 shadow-lg shadow-primary/20 hover:scale-105 transition-transform"
             onClick={handleActivate}
-            disabled={isSaving || isActivating || localQuestions.length === 0}
+            disabled={isSaving || isActivating || localQuestions.length === 0 || !draft.basicInfo.expiresAt}
           >
             {isActivating ? (
               <div className="h-4 w-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin mr-2" />

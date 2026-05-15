@@ -19,6 +19,8 @@ sourceMapSupport.install();
 
 const app: Express = express();
 
+app.set("trust proxy", true);
+
 app.use(
   cors({
     origin: env.CORS_ORIGIN || "*",

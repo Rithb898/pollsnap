@@ -214,7 +214,7 @@ router.delete("/:id", requireAuth, requireCreator, deletePoll);
  *       200:
  *         description: Poll activated
  *       400:
- *         description: Validation failed - poll must have questions with 2+ options and expiry date
+ *         description: Validation failed - poll must have questions with 2+ options and an expiry date
  *       401:
  *         description: Unauthorized
  *       403:

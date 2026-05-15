@@ -1,5 +1,12 @@
 import db from "@/db/db";
-import { poll, question, option, response, responseAnswer } from "@/drizzle";
+import {
+  poll,
+  question,
+  option,
+  response,
+  responseAnswer,
+  user
+} from "@/drizzle";
 import { eq, and, isNull, sql } from "drizzle-orm";
 import { ApiError } from "@/shared/errors/api-error";
 
@@ -28,7 +35,28 @@ export interface PollAnalytics {
   goalProgress: number | null;
   completionRate: number;
   questions: QuestionAnalytics[];
-  recentVotes: { id: string; time: string }[];
+  recentVotes: {
+    id: string;
+    time: string;
+    respondent: {
+      id: string;
+      displayName: string;
+      email: string;
+    } | null;
+  }[];
+  audience: {
+    geographic: {
+      country: string;
+      code: string;
+      count: number;
+      percentage: number;
+    }[];
+    devices: {
+      type: string;
+      count: number;
+      percentage: number;
+    }[];
+  };
 }
 
 export interface PollResults {
@@ -133,15 +161,63 @@ export const getPollAnalytics = async (
       : null;
 
   const recentResponsesQuery = await db
-    .select({ id: response.id, submittedAt: response.submittedAt })
+    .select({
+      id: response.id,
+      submittedAt: response.submittedAt,
+      respondentId: response.respondentId,
+      respondentName: user.name,
+      respondentEmail: user.email
+    })
     .from(response)
+    .leftJoin(user, eq(response.respondentId, user.id))
     .where(eq(response.pollId, pollId))
     .orderBy(sql`${response.submittedAt} DESC`)
     .limit(10);
 
   const recentVotes = recentResponsesQuery.map(r => ({
     id: r.id,
-    time: r.submittedAt.toISOString()
+    time: r.submittedAt.toISOString(),
+    respondent: r.respondentId
+      ? {
+          id: r.respondentId,
+          displayName:
+            r.respondentName || r.respondentEmail || "Authenticated respondent",
+          email: r.respondentEmail || ""
+        }
+      : null
+  }));
+
+  const geographicQuery = await db
+    .select({
+      countryCode: response.countryCode,
+      count: sql<number>`count(*)::int`
+    })
+    .from(response)
+    .where(eq(response.pollId, pollId))
+    .groupBy(response.countryCode)
+    .orderBy(sql`count(*) DESC`);
+
+  const geographic = geographicQuery.map(g => ({
+    country: g.countryCode || "Unknown",
+    code: g.countryCode || "XX",
+    count: g.count,
+    percentage: totalResponses > 0 ? (g.count / totalResponses) * 100 : 0
+  }));
+
+  const deviceQuery = await db
+    .select({
+      type: response.deviceType,
+      count: sql<number>`count(*)::int`
+    })
+    .from(response)
+    .where(eq(response.pollId, pollId))
+    .groupBy(response.deviceType)
+    .orderBy(sql`count(*) DESC`);
+
+  const devices = deviceQuery.map(d => ({
+    type: d.type || "unknown",
+    count: d.count,
+    percentage: totalResponses > 0 ? (d.count / totalResponses) * 100 : 0
   }));
 
   return {
@@ -156,7 +232,11 @@ export const getPollAnalytics = async (
     goalProgress,
     completionRate,
     questions: questionsAnalytics,
-    recentVotes
+    recentVotes,
+    audience: {
+      geographic,
+      devices
+    }
   };
 };
 

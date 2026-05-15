@@ -23,7 +23,7 @@ const router = Router({ mergeParams: true });
  *           format: uuid
  *     responses:
  *       200:
- *         description: Analytics data
+ *         description: Analytics data, including recent vote identities for non-anonymous polls
  *       400:
  *         description: Poll not active or published
  *       401:

@@ -187,7 +187,7 @@
     "/v1/polls/{id}/activate": {
       "post": {
         "tags": ["Polls"],
-        "description": "Activate poll",
+        "description": "Activate poll. Requires at least one question with 2+ options and an expiry date.",
         "parameters": [
           {
             "name": "id",
@@ -490,8 +490,26 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "200": {
+            "description": "Poll analytics data including response stats, question results, recent activity, and audience insights",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "poll": { "type": "object" },
+                "totalResponses": { "type": "number" },
+                "goalProgress": { "type": "number", "nullable": true },
+                "completionRate": { "type": "number" },
+                "questions": { "type": "array", "items": { "type": "object" } },
+                "recentVotes": { "type": "array", "items": { "type": "object" } },
+                "audience": {
+                  "type": "object",
+                  "properties": {
+                    "geographic": { "type": "array", "items": { "type": "object" } },
+                    "devices": { "type": "array", "items": { "type": "object" } }
+                  }
+                }
+              }
+            }
           }
         }
       }

@@ -3,6 +3,7 @@ import { z } from "zod";
 export const createPollSchema = z.object({
   title: z
     .string()
+    .trim()
     .min(1, "Title is required")
     .max(255, "Title must be 255 characters or less"),
   description: z
@@ -13,17 +14,20 @@ export const createPollSchema = z.object({
   expiresAt: z
     .string()
     .datetime({ message: "expiresAt must be a valid ISO 8601 datetime" })
-    .optional(),
+    .optional()
+    .nullable(),
   responseGoal: z
     .number()
     .int("Response goal must be an integer")
     .positive("Response goal must be positive")
     .optional()
+    .nullable()
 });
 
 export const updatePollSchema = z.object({
   title: z
     .string()
+    .trim()
     .min(1, "Title cannot be empty")
     .max(255, "Title must be 255 characters or less")
     .optional(),

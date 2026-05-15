@@ -25,8 +25,8 @@ export function TrendChart({ data, loading, className }: TrendChartProps) {
           <AreaChart data={data || []} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
             <defs>
               <linearGradient id="colorResponses" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
-                <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
+                <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
               </linearGradient>
             </defs>
             <XAxis
@@ -49,7 +49,7 @@ export function TrendChart({ data, loading, className }: TrendChartProps) {
             <Area
               type="monotone"
               dataKey="responses"
-              stroke="hsl(var(--primary))"
+              stroke="var(--primary)"
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorResponses)"
