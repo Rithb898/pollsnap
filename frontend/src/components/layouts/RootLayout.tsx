@@ -22,7 +22,6 @@ export default function RootLayout() {
           <Link to="/" className="flex items-center gap-3 transition-all hover:scale-[1.02] group">
             <BrandLogo
               imageClassName="h-10 w-auto"
-              textClassName="text-2xl font-black tracking-tighter uppercase font-heading"
             />
           </Link>
 

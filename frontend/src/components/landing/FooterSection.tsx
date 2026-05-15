@@ -11,7 +11,6 @@ export function FooterSection() {
             <Link to="/" className="flex items-center gap-2">
               <BrandLogo
                 imageClassName="h-8 w-auto"
-                textClassName="text-xl font-bold"
               />
             </Link>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xs">

@@ -54,7 +54,6 @@ export default function DashboardLayout() {
             <Link to="/" className="flex items-center gap-2 group">
               <BrandLogo
                 imageClassName="h-8 w-auto"
-                textClassName="font-heading font-black text-xl tracking-tight"
               />
             </Link>
           </div>
@@ -106,7 +105,7 @@ export default function DashboardLayout() {
 
           {/* Pro Upgrade Banner */}
           <div className="px-4 mb-4">
-            <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-4 relative overflow-hidden group">
+            <div className="bg-linear-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-4 relative overflow-hidden group">
               <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:scale-110 transition-transform duration-500">
                 <Sparkles className="h-12 w-12 text-indigo-500" />
               </div>
@@ -167,7 +166,6 @@ export default function DashboardLayout() {
           <Link to="/" className="flex items-center gap-2">
             <BrandLogo
               imageClassName="h-7 w-auto"
-              textClassName="font-heading font-black text-lg tracking-tight"
             />
           </Link>
         </header>

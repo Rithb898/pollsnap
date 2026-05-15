@@ -8,8 +8,6 @@ type BrandLogoProps = {
 export function BrandLogo({
   className = "",
   imageClassName = "h-10 w-auto",
-  textClassName = "",
-  showText = true,
 }: BrandLogoProps) {
   return (
     <div className={`inline-flex items-center gap-3 ${className}`.trim()}>

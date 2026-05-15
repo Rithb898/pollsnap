@@ -7,7 +7,7 @@ export function CTASection() {
   return (
     <section className="py-48 px-6 relative overflow-hidden">
       <div className="container mx-auto max-w-7xl">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -16,8 +16,8 @@ export function CTASection() {
         >
           {/* Subtle Background Glows matching Aurora theme */}
           <div className="absolute inset-0 z-0 pointer-events-none">
-            <div className="absolute -top-1/2 -right-1/4 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] animate-pulse" />
-            <div className="absolute -bottom-1/2 -left-1/4 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[100px] animate-aurora" />
+            <div className="absolute -top-1/2 -right-1/4 w-200 h-200 bg-primary/10 rounded-full blur-[120px] animate-pulse" />
+            <div className="absolute -bottom-1/2 -left-1/4 w-150 h-150 bg-indigo-500/10 rounded-full blur-[100px] animate-aurora" />
           </div>
 
           <div className="max-w-4xl space-y-12 relative z-10">
@@ -26,14 +26,14 @@ export function CTASection() {
                 <Sparkles className="h-3 w-3" />
                 <span>Ready to transform?</span>
               </div>
-              
+
               <h2 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] font-heading text-foreground">
                 Capture the <br />
                 <span className="italic text-primary opacity-80">Liquid</span> <br />
                 Sentiment.
               </h2>
             </div>
-            
+
             <p className="text-2xl md:text-3xl font-medium leading-relaxed max-w-2xl text-muted-foreground">
               Join thousands of creators using the most design-obsessed polling platform on the web.
             </p>
@@ -43,7 +43,7 @@ export function CTASection() {
                 Get Started Free
                 <ArrowRight className="ml-3 h-6 w-6 transition-transform group-hover:translate-x-2" />
               </Button>
-              
+
               <div className="flex flex-col">
                 <span className="text-3xl font-black tracking-tighter text-foreground">12,482</span>
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Live Pollsters</span>
@@ -53,16 +53,16 @@ export function CTASection() {
 
           {/* Abstract Bento-style decorative elements */}
           <div className="absolute right-0 bottom-0 top-0 w-1/3 hidden lg:flex items-center justify-center p-12 pointer-events-none">
-             <div className="relative w-full aspect-square border border-primary/10 rounded-[48px] bg-white/20 backdrop-blur-xl rotate-12 flex items-center justify-center overflow-hidden group-hover:rotate-6 transition-transform duration-1000">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
-                <div className="text-[200px] font-black text-primary/5 tracking-tighter select-none">
-                  P
-                </div>
-                {/* Floating pill in the "device" */}
-                <div className="absolute bottom-12 left-12 right-12 h-16 rounded-2xl bg-primary shadow-xl flex items-center justify-center text-white font-black uppercase tracking-widest text-xs">
-                  Live Response
-                </div>
-             </div>
+            <div className="relative w-full aspect-square border border-primary/10 rounded-[48px] bg-white/20 backdrop-blur-xl rotate-12 flex items-center justify-center overflow-hidden group-hover:rotate-6 transition-transform duration-1000">
+              <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent" />
+              <div className="text-[200px] font-black text-primary/5 tracking-tighter select-none">
+                P
+              </div>
+              {/* Floating pill in the "device" */}
+              <div className="absolute bottom-12 left-12 right-12 h-16 rounded-2xl bg-primary shadow-xl flex items-center justify-center text-white font-black uppercase tracking-widest text-xs">
+                Live Response
+              </div>
+            </div>
           </div>
         </motion.div>
       </div>

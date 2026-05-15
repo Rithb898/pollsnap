@@ -34,11 +34,11 @@ export default function Login() {
     <div className="min-h-screen w-full flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-6 relative overflow-hidden">
       {/* Background Orbs */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/3 right-1/4 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-1/3 left-1/4 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[100px]" />
+        <div className="absolute top-1/3 right-1/4 w-200 h-200 bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/3 left-1/4 w-150 h-150 bg-indigo-500/5 rounded-full blur-[100px]" />
       </div>
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
@@ -46,7 +46,7 @@ export default function Login() {
       >
         <div className="flex flex-col items-center mb-10 space-y-4">
           <Link to="/" className="hover:scale-[1.02] transition-transform">
-            <BrandLogo imageClassName="h-14 w-auto" showText={false} />
+            <BrandLogo imageClassName="h-14 w-auto" />
           </Link>
           <div className="text-center">
             <h1 className="text-3xl font-black tracking-tighter font-heading">Access Vault</h1>

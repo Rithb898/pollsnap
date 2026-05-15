@@ -12,7 +12,6 @@ export function FooterRevamp() {
             <Link to="/" className="flex items-center gap-3">
               <BrandLogo
                 imageClassName="h-10 w-auto"
-                textClassName="text-3xl font-black tracking-tighter uppercase"
               />
             </Link>
             <p className="text-xl text-muted-foreground leading-relaxed max-w-sm">
@@ -49,7 +48,7 @@ export function FooterRevamp() {
             </div>
             <div className="col-span-2 md:col-span-1">
               <div className="p-8 rounded-[32px] border border-white/10 bg-white/5 space-y-4 shadow-xl">
-                <p className="text-sm font-bold uppercase tracking-[0.1em]">Global Infrastructure</p>
+                <p className="text-sm font-bold uppercase tracking-widest">Global Infrastructure</p>
                 <div className="flex items-center gap-2 text-emerald-500 font-bold text-xl">
                   <div className="h-3 w-3 rounded-full bg-emerald-500 animate-pulse" />
                   All Systems Up
